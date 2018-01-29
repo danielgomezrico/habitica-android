@@ -64,21 +64,21 @@ public class ChallengeTasksRecyclerViewAdapter
 
     @Override
     public int getItemViewType(int position) {
-        Task task = this.filteredContent.get(position);
+        Task task = this.getFilteredContent().get(position);
 
-        if (task.type.equals(Task.TYPE_HABIT))
+        if (task.getType().equals(Task.TYPE_HABIT))
             return TYPE_HABIT;
 
-        if (task.type.equals(Task.TYPE_DAILY))
+        if (task.getType().equals(Task.TYPE_DAILY))
             return TYPE_DAILY;
 
-        if (task.type.equals(Task.TYPE_TODO))
+        if (task.getType().equals(Task.TYPE_TODO))
             return TYPE_TODO;
 
-        if (task.type.equals(Task.TYPE_REWARD))
+        if (task.getType().equals(Task.TYPE_REWARD))
             return TYPE_REWARD;
 
-        if (addItemSubject.hasObservers() && task.type.equals(TASK_TYPE_ADD_ITEM))
+        if (addItemSubject.hasObservers() && task.getType().equals(TASK_TYPE_ADD_ITEM))
             return TYPE_ADD_ITEM;
 
         return TYPE_HEADER;
@@ -89,9 +89,9 @@ public class ChallengeTasksRecyclerViewAdapter
     }
 
     public int addTaskUnder(Task taskToAdd, Task taskAbove) {
-        int position = $.findIndex(this.content, t -> t.getId().equals(taskAbove.getId()));
+        int position = $.findIndex(this.getContent(), t -> t.getId().equals(taskAbove.getId()));
 
-        content.add(position + 1, taskToAdd);
+        getContent().add(position + 1, taskToAdd);
         filter();
 
         return position;
@@ -127,7 +127,7 @@ public class ChallengeTasksRecyclerViewAdapter
     }
 
     public List<Task> getTaskList(){
-        return $.map(content, t -> t);
+        return $.map(getContent(), t -> t);
     }
 
 
@@ -137,13 +137,13 @@ public class ChallengeTasksRecyclerViewAdapter
      */
     public boolean replaceTask(Task task) {
         int i;
-        for (i = 0; i < this.content.size(); ++i) {
-            if (content.get(i).getId().equals(task.getId())) {
+        for (i = 0; i < this.getContent().size(); ++i) {
+            if (getContent().get(i).getId().equals(task.getId())) {
                 break;
             }
         }
-        if (i < content.size()) {
-            content.set(i, task);
+        if (i < getContent().size()) {
+            getContent().set(i, task);
 
             filter();
             return true;
@@ -171,7 +171,7 @@ public class ChallengeTasksRecyclerViewAdapter
         @Override
         public void bindHolder(Task newTask, int position) {
             this.newTask = newTask;
-            addBtn.setText(newTask.text);
+            addBtn.setText(newTask.getText());
         }
     }
 
@@ -189,7 +189,7 @@ public class ChallengeTasksRecyclerViewAdapter
 
         @Override
         public void bindHolder(Task newTask, int position) {
-            divider_name.setText(newTask.text);
+            divider_name.setText(newTask.getText());
         }
     }
 }

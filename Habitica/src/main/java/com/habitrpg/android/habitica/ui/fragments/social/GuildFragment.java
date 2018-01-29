@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,7 +25,7 @@ import javax.inject.Inject;
 
 import rx.functions.Action1;
 
-public class GuildFragment extends BaseMainFragment implements Action1<Group> {
+public class GuildFragment extends BaseMainFragment {
 
     @Inject
     SocialRepository socialRepository;
@@ -51,14 +50,14 @@ public class GuildFragment extends BaseMainFragment implements Action1<Group> {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_viewpager, container, false);
 
-        viewPager = (ViewPager) v.findViewById(R.id.view_pager);
+        viewPager = (ViewPager) v.findViewById(R.id.viewPager);
 
         viewPager.setCurrentItem(0);
 
         setViewPagerAdapter();
 
         if (guildId != null && this.socialRepository != null) {
-            compositeSubscription.add(socialRepository.getGroup(this.guildId).subscribe(this, RxErrorHandler.handleEmptyError()));
+            getCompositeSubscription().add(socialRepository.getGroup(this.guildId).subscribe(this::setGroup, RxErrorHandler.handleEmptyError()));
             socialRepository.retrieveGroup(this.guildId).subscribe(group -> {}, RxErrorHandler.handleEmptyError());
         }
 
@@ -87,8 +86,7 @@ public class GuildFragment extends BaseMainFragment implements Action1<Group> {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (this.socialRepository != null && this.guild != null) {
-            socialRepository.retrieveGroup(this.guild.id)
-                    .subscribe(this, RxErrorHandler.handleEmptyError());
+            socialRepository.retrieveGroup(this.guild.id).subscribe(this::setGroup, RxErrorHandler.handleEmptyError());
         }
     }
 
@@ -114,8 +112,7 @@ public class GuildFragment extends BaseMainFragment implements Action1<Group> {
 
         switch (id) {
             case R.id.menu_guild_join:
-                this.socialRepository.joinGroup(this.guild.id)
-                        .subscribe(this, RxErrorHandler.handleEmptyError());
+                this.socialRepository.joinGroup(this.guild.id).subscribe(this::setGroup, RxErrorHandler.handleEmptyError());
                 this.isMember = true;
                 return true;
             case R.id.menu_guild_leave:
@@ -146,7 +143,7 @@ public class GuildFragment extends BaseMainFragment implements Action1<Group> {
 
                 switch (position) {
                     case 0: {
-                        fragment = guildInformationFragment = GroupInformationFragment.newInstance(GuildFragment.this.guild, user);
+                        fragment = guildInformationFragment = GroupInformationFragment.Companion.newInstance(GuildFragment.this.guild, user);
                         break;
                     }
                     case 1: {
@@ -238,15 +235,14 @@ public class GuildFragment extends BaseMainFragment implements Action1<Group> {
         }
     }
 
-    @Override
-    public void call(Group group) {
+    public void setGroup(Group group) {
         if (group != null) {
             if (this.guildInformationFragment != null) {
                 this.guildInformationFragment.setGroup(group);
             }
 
             if (this.chatListFragment != null) {
-                this.chatListFragment.seenGroupId = group.id;
+                this.chatListFragment.setSeenGroupId(group.id);
             }
 
             this.guild = group;

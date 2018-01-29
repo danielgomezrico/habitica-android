@@ -58,12 +58,12 @@ public class RewardsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             if (user != null && user.getStats() != null) {
                 gold = user.getStats().getGp();
             }
-            ((RewardViewHolder)holder).bindHolder(reward, position, reward.value < gold);
+            ((RewardViewHolder)holder).bindHolder(reward, position, reward.getValue() < gold);
         } else if (inAppRewards != null) {
             ShopItem item = inAppRewards.get(position-getCustomRewardCount());
-            ((ShopItemViewHolder)holder).bind(item, item.canBuy(user));
-            ((ShopItemViewHolder)holder).setIsPinned(true);
-            ((ShopItemViewHolder)holder).pinIndicator.setVisibility(View.GONE);
+            ((ShopItemViewHolder)holder).bind(item, item.canAfford(user));
+            ((ShopItemViewHolder)holder).setPinned(true);
+            ((ShopItemViewHolder) holder).hidePinIndicator();
         }
     }
 
@@ -74,6 +74,21 @@ public class RewardsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         } else {
             return VIEWTYPE_IN_APP_REWARD;
         }
+    }
+
+    @Override
+    public void setIgnoreUpdates(boolean ignoreUpdates) {
+
+    }
+
+    @Override
+    public boolean getIgnoreUpdates() {
+        return false;
+    }
+
+    @Override
+    public void updateUnfilteredData(@org.jetbrains.annotations.Nullable OrderedRealmCollection<Task> data) {
+        updateData(data);
     }
 
     @Override

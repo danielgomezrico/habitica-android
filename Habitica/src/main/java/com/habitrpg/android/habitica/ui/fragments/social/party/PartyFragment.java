@@ -63,14 +63,14 @@ public class PartyFragment extends BaseMainFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_viewpager, container, false);
 
-        viewPager = (ViewPager) v.findViewById(R.id.view_pager);
+        viewPager = (ViewPager) v.findViewById(R.id.viewPager);
 
         viewPager.setCurrentItem(0);
 
         // Get the full group data
         if (userHasParty()) {
             if (user != null) {
-                compositeSubscription.add(socialRepository.getGroup(user.getParty().getId())
+                getCompositeSubscription().add(socialRepository.getGroup(user.getParty().getId())
                         .first()
                         //delay, so that realm can save party first
                         .delay(500, TimeUnit.MILLISECONDS)
@@ -86,8 +86,8 @@ public class PartyFragment extends BaseMainFragment {
         }
 
         setViewPagerAdapter();
-        this.tutorialStepIdentifier = "party";
-        this.tutorialText = getString(R.string.tutorial_party);
+        this.setTutorialStepIdentifier("party");
+        this.setTutorialText(getString(R.string.tutorial_party));
 
         return v;
     }
@@ -133,7 +133,7 @@ public class PartyFragment extends BaseMainFragment {
         }
 
         if (chatListFragment != null && group != null) {
-            chatListFragment.seenGroupId = group.id;
+            chatListFragment.setSeenGroupId(group.id);
         }
 
         if (this.activity != null) {
@@ -266,7 +266,7 @@ public class PartyFragment extends BaseMainFragment {
                             detailFragment.partyId = user.getParty().id;
                             fragment = detailFragment;
                         } else {
-                            fragment = GroupInformationFragment.newInstance(null, user);
+                            fragment = GroupInformationFragment.Companion.newInstance(null, user);
                         }
                         break;
                     }

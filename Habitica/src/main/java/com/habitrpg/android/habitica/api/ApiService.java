@@ -29,6 +29,7 @@ import com.habitrpg.android.habitica.models.social.Group;
 import com.habitrpg.android.habitica.models.tasks.Task;
 import com.habitrpg.android.habitica.models.tasks.TaskList;
 import com.habitrpg.android.habitica.models.user.Items;
+import com.habitrpg.android.habitica.models.user.Stats;
 import com.habitrpg.android.habitica.models.user.User;
 
 import java.util.List;
@@ -272,7 +273,9 @@ public interface ApiService {
     Observable<HabitResponse<PostChatMessageResult>> postPrivateMessage(@Body Map<String, String> messageDetails);
 
     @GET("shops/{identifier}")
-    Observable<HabitResponse<Shop>> fetchShopInventory(@Path("identifier") String identifier);
+    Observable<HabitResponse<Shop>> retrieveShopInventory(@Path("identifier") String identifier);
+    @GET("shops/market-gear")
+    Observable<HabitResponse<Shop>> retrieveMarketGear();
 
     //Push notifications
     @POST("user/push-devices")
@@ -337,4 +340,19 @@ public interface ApiService {
 
     @POST("user/reset-password")
     Observable<HabitResponse<Void>> sendPasswordResetEmail(@Body Map<String, String> data);
+
+    @PUT("user/auth/update-username")
+    Observable<HabitResponse<Void>> updateLoginName(@Body Map<String, String> data);
+
+    @PUT("user/auth/update-email")
+    Observable<HabitResponse<Void>> updateEmail(@Body Map<String, String> data);
+
+    @PUT("user/auth/update-password")
+    Observable<HabitResponse<Void>> updatePassword(@Body Map<String, String> data);
+
+    @POST("user/allocate")
+    Observable<HabitResponse<Stats>> allocatePoint(@Query("stat") String stat);
+
+    @POST("user/allocate-bulk")
+    Observable<HabitResponse<Stats>> bulkAllocatePoints(@Body Map<String, Map<String, Integer>> stats);
 }

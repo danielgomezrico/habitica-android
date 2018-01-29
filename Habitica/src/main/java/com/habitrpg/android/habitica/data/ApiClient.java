@@ -30,6 +30,7 @@ import com.habitrpg.android.habitica.models.social.Group;
 import com.habitrpg.android.habitica.models.tasks.Task;
 import com.habitrpg.android.habitica.models.tasks.TaskList;
 import com.habitrpg.android.habitica.models.user.Items;
+import com.habitrpg.android.habitica.models.user.Stats;
 import com.habitrpg.android.habitica.models.user.User;
 
 import java.util.List;
@@ -187,7 +188,7 @@ public interface ApiClient {
 
     Observable<PostChatMessageResult> postPrivateMessage(Map<String, String> messageDetails);
 
-    Observable<Shop> fetchShopInventory(String identifier);
+    Observable<Shop> retrieveShopIventory(String identifier);
 
     //Push notifications
     Observable<List<Void>> addPushDevice(Map<String, String> pushDeviceData);
@@ -240,4 +241,16 @@ public interface ApiClient {
     Observable<Void> togglePinnedItem(String pinType, String path);
 
     Observable<Void> sendPasswordResetEmail(String email);
+
+    Observable<Void> updateLoginName(String newLoginName, String password);
+
+    Observable<Void> updateEmail(String newEmail, String password);
+
+    Observable<Void> updatePassword(String newPassword, String oldPassword, String oldPasswordConfirmation);
+
+    Observable<Stats> allocatePoint(String stat);
+
+    Observable<Stats> bulkAllocatePoints(int strength, int intelligence, int constitution, int perception);
+
+    Observable<Shop> retrieveMarketGear();
 }

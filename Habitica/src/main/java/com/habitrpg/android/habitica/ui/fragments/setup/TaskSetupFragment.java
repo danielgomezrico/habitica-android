@@ -52,7 +52,7 @@ public class TaskSetupFragment extends BaseFragment {
 
         this.setTasks();
 
-        unbinder = ButterKnife.bind(this, view);
+        setUnbinder(ButterKnife.bind(this, view));
         this.adapter = new TaskSetupAdapter();
         this.adapter.setTaskList(this.taskGroups);
         this.recyclerView.setLayoutManager(new GridLayoutManager(activity, 2));
@@ -159,18 +159,18 @@ public class TaskSetupFragment extends BaseFragment {
 
     private Task makeTaskObject(String type, String text, @Nullable Boolean up, @Nullable Boolean down) {
         Task task = new Task();
-        task.text = text;
-        task.priority = 1.0f;
-        task.type = type;
+        task.setText(text);
+        task.setPriority(1.0f);
+        task.setType(type);
 
         if (type.equals("habit")) {
-            task.up = up;
-            task.down = down;
+            task.setUp(up);
+            task.setDown(down);
         }
 
         if (type.equals("daily")) {
-            task.frequency = "weekly";
-            task.startDate = new Date();
+            task.setFrequency("weekly");
+            task.setStartDate(new Date());
             Days days = new Days();
             days.setM(true);
             days.setT(true);
@@ -179,7 +179,7 @@ public class TaskSetupFragment extends BaseFragment {
             days.setF(true);
             days.setS(true);
             days.setSu(true);
-            task.repeat = days;
+            task.setRepeat(days);
         }
 
         return task;

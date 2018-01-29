@@ -81,6 +81,7 @@ public class QuestDetailFragment extends BaseMainFragment {
     public String questKey;
     private Group party;
     private Quest quest;
+    private String begin_quest_message;
 
 
     @Nullable
@@ -99,8 +100,8 @@ public class QuestDetailFragment extends BaseMainFragment {
     @Override
     public void onResume() {
         super.onResume();
-        compositeSubscription.add(socialRepository.getGroup(partyId).subscribe(this::updateParty, RxErrorHandler.handleEmptyError()));
-        compositeSubscription.add(inventoryRepository.getQuestContent(questKey).subscribe(this::updateQuestContent, RxErrorHandler.handleEmptyError()));
+        getCompositeSubscription().add(socialRepository.getGroup(partyId).subscribe(this::updateParty, RxErrorHandler.handleEmptyError()));
+        getCompositeSubscription().add(inventoryRepository.getQuestContent(questKey).subscribe(this::updateQuestContent, RxErrorHandler.handleEmptyError()));
     }
 
 
@@ -162,7 +163,7 @@ public class QuestDetailFragment extends BaseMainFragment {
         }
         questTitleView.setText(questContent.getText());
         questDescriptionView.setText(MarkdownParser.parseMarkdown(questContent.getNotes()));
-        DataBindingUtils.loadImage(questScrollImageView, "inventory_quest_scroll_"+questContent.getKey());
+        DataBindingUtils.INSTANCE.loadImage(questScrollImageView, "inventory_quest_scroll_"+questContent.getKey());
     }
 
     private void setQuestParticipants(List<Member> participants) {
@@ -205,6 +206,7 @@ public class QuestDetailFragment extends BaseMainFragment {
         } else {
             participantHeader.setText(R.string.invitations);
             participantHeaderCount.setText(participantCount + "/" + quest.participants.size());
+            begin_quest_message = getString(R.string.quest_begin_message, participantCount, quest.participants.size());
         }
     }
 
@@ -230,7 +232,7 @@ public class QuestDetailFragment extends BaseMainFragment {
     @OnClick(R.id.quest_begin_button)
     public void onQuestBegin() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
-                .setMessage(R.string.quest_begin_message)
+                .setMessage(begin_quest_message)
                 .setPositiveButton(R.string.yes, (dialog, which) -> socialRepository.forceStartQuest(party)
                         .subscribe(quest -> {}, RxErrorHandler.handleEmptyError()))
                 .setNegativeButton(R.string.no, (dialog, which) -> {});

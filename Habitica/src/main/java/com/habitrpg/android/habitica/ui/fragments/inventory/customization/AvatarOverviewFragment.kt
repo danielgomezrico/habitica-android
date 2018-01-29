@@ -1,0 +1,120 @@
+package com.habitrpg.android.habitica.ui.fragments.inventory.customization
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.AdapterView
+import com.habitrpg.android.habitica.R
+import com.habitrpg.android.habitica.components.AppComponent
+import com.habitrpg.android.habitica.helpers.RxErrorHandler
+import com.habitrpg.android.habitica.models.user.User
+import com.habitrpg.android.habitica.ui.fragments.BaseMainFragment
+import kotlinx.android.synthetic.main.fragment_avatar_overview.*
+import rx.functions.Action1
+
+class AvatarOverviewFragment : BaseMainFragment(), AdapterView.OnItemSelectedListener {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (apiClient != null) {
+            apiClient.content
+                    .subscribe(Action1 { }, RxErrorHandler.handleEmptyError())
+        }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        return inflater.inflate(R.layout.fragment_avatar_overview, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (this.user == null) {
+            return
+        }
+
+        this.setSize(this.user?.preferences?.size)
+        avatarSizeSpinner.onItemSelectedListener = this
+
+        avatarShirtView.setOnClickListener { displayCustomizationFragment("shirt", null) }
+        avatarSkinView.setOnClickListener { displayCustomizationFragment("skin", null) }
+        avatarHairColorView.setOnClickListener { displayCustomizationFragment("hair", "color") }
+        avatarHairBangsView.setOnClickListener { displayCustomizationFragment("hair", "bangs") }
+        avatarHairBaseView.setOnClickListener { displayCustomizationFragment("hair", "base") }
+        avatarHairFlowerView.setOnClickListener { displayCustomizationFragment("hair", "flower") }
+        avatarHairBeardView.setOnClickListener { displayCustomizationFragment("hair", "beard") }
+        avatarHairMustacheView.setOnClickListener { displayCustomizationFragment("hair", "mustache") }
+        avatarBackgroundView.setOnClickListener { displayCustomizationFragment("background", null) }
+
+        setCustomizations()
+    }
+
+    private fun setCustomizations() {
+        avatarShirtView.customizationIdentifier = user?.preferences?.size + "_shirt_" + user?.preferences?.shirt
+        avatarShirtView.equipmentName = user?.preferences?.shirt
+        avatarSkinView.customizationIdentifier = "skin_" + user?.preferences?.skin
+        avatarSkinView.equipmentName = user?.preferences?.skin
+        avatarHairColorView.customizationIdentifier = if (user?.preferences?.hair?.color != null && user?.preferences?.hair?.color != "") "hair_bangs_1_" + user?.preferences?.hair?.color else ""
+        avatarHairColorView.equipmentName = user?.preferences?.hair?.color
+        avatarHairBangsView.customizationIdentifier = if (user?.preferences?.hair?.bangs != null && user?.preferences?.hair?.bangs != 0) "hair_bangs_" + user?.preferences?.hair?.bangs + "_" + user?.preferences?.hair?.color else ""
+        avatarHairBangsView.equipmentName = user?.preferences?.hair?.bangs.toString()
+        avatarHairBaseView.customizationIdentifier = if (user?.preferences?.hair?.base != null && user?.preferences?.hair?.base != 0) "hair_base_" + user?.preferences?.hair?.base + "_" + user?.preferences?.hair?.color else ""
+        avatarHairBaseView.equipmentName = user?.preferences?.hair?.base.toString()
+        avatarHairFlowerView.customizationIdentifier = if (user?.preferences?.hair?.flower != null && user?.preferences?.hair?.flower != 0) "hair_flower_" + user?.preferences?.hair?.flower else ""
+        avatarHairFlowerView.equipmentName = user?.preferences?.hair?.bangs.toString()
+        avatarHairBeardView.customizationIdentifier = if (user?.preferences?.hair?.beard != null && user?.preferences?.hair?.beard != 0) "hair_beard_" + user?.preferences?.hair?.beard + "_" + user?.preferences?.hair?.color else ""
+        avatarHairBeardView.equipmentName = user?.preferences?.hair?.beard.toString()
+        avatarHairMustacheView.customizationIdentifier = if (user?.preferences?.hair?.mustache != null && user?.preferences?.hair?.mustache != 0) "hair_mustache_" + user?.preferences?.hair?.mustache + "_" + user?.preferences?.hair?.color else ""
+        avatarHairMustacheView.equipmentName = user?.preferences?.hair?.mustache.toString()
+        avatarBackgroundView.customizationIdentifier = "background_" + user?.preferences?.background
+        avatarBackgroundView.equipmentName = user?.preferences?.background
+    }
+
+    override fun injectFragment(component: AppComponent) {
+        component.inject(this)
+    }
+
+    private fun displayCustomizationFragment(type: String, category: String?) {
+        val fragment = AvatarCustomizationFragment()
+        fragment.type = type
+        fragment.category = category
+        activity?.displayFragment(fragment)
+    }
+
+    override fun updateUserData(user: User?) {
+        super.updateUserData(user)
+        this.setSize(user?.preferences?.size)
+    }
+
+    private fun setSize(size: String?) {
+        if (avatarSizeSpinner == null || size == null) {
+            return
+        }
+        if (size == "slim") {
+            avatarSizeSpinner.setSelection(0, false)
+        } else {
+            avatarSizeSpinner.setSelection(1, false)
+        }
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+        val newSize: String = if (position == 0) "slim" else "broad"
+
+        if (this.user != null && this.user!!.preferences.size != newSize) {
+            userRepository.updateUser(user, "preferences.size", newSize)
+                    .subscribe(Action1 { }, RxErrorHandler.handleEmptyError())
+        }
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>) {}
+
+
+    override fun customTitle(): String {
+        return if (!isAdded) {
+            ""
+        } else getString(R.string.sidebar_avatar)
+    }
+}

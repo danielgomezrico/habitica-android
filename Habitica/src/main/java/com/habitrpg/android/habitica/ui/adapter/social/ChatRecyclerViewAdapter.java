@@ -38,6 +38,7 @@ import rx.subjects.PublishSubject;
 public class ChatRecyclerViewAdapter extends RealmRecyclerViewAdapter<ChatMessage, ChatRecyclerViewAdapter.ChatRecyclerViewHolder> {
 
     private User user;
+    private boolean isTavern;
     private String uuid;
     private User sendingUser;
 
@@ -49,9 +50,10 @@ public class ChatRecyclerViewAdapter extends RealmRecyclerViewAdapter<ChatMessag
     private PublishSubject<ChatMessage> copyMessageAsTodoEvents = PublishSubject.create();
     private PublishSubject<ChatMessage> copyMessageEvents = PublishSubject.create();
 
-    public ChatRecyclerViewAdapter(@Nullable OrderedRealmCollection<ChatMessage> data, boolean autoUpdate, User user) {
+    public ChatRecyclerViewAdapter(@Nullable OrderedRealmCollection<ChatMessage> data, boolean autoUpdate, User user, boolean isTavern) {
         super(data, autoUpdate);
         this.user = user;
+        this.isTavern = isTavern;
         if (user != null) this.uuid = user.getId();
     }
 
@@ -63,7 +65,7 @@ public class ChatRecyclerViewAdapter extends RealmRecyclerViewAdapter<ChatMessag
     public ChatRecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.tavern_chat_item, parent, false);
-        return new ChatRecyclerViewHolder(view, uuid);
+        return new ChatRecyclerViewHolder(view, uuid, isTavern);
     }
 
     @Override
@@ -89,7 +91,7 @@ public class ChatRecyclerViewAdapter extends RealmRecyclerViewAdapter<ChatMessag
         return deleteMessageEvents.asObservable();
     }
 
-    public Observable<ChatMessage> getFlatMessageEvents() {
+    public Observable<ChatMessage> getFlagMessageEvents() {
         return flatMessageEvents.asObservable();
     }
 
@@ -108,25 +110,27 @@ public class ChatRecyclerViewAdapter extends RealmRecyclerViewAdapter<ChatMessag
         ImageView btnOptions;
         @BindView(R.id.user_background_layout)
         LinearLayout userBackground;
-        @BindView(R.id.like_background_layout)
-        LinearLayout likeBackground;
         @BindView(R.id.user_label)
         TextView userLabel;
         @BindView(R.id.message_text)
         EmojiTextView messageText;
         @BindView(R.id.ago_label)
         TextView agoLabel;
+        @BindView(R.id.like_background_layout)
+        LinearLayout likeBackground;
         @BindView(R.id.tvLikes)
         TextView tvLikes;
 
         Context context;
         Resources res;
         private String userId;
+        private boolean isTavern;
         private ChatMessage chatMessage;
 
-        ChatRecyclerViewHolder(View itemView, String currentUserId) {
+        ChatRecyclerViewHolder(View itemView, String currentUserId, boolean isTavern) {
             super(itemView);
             this.userId = currentUserId;
+            this.isTavern = isTavern;
 
             ButterKnife.bind(this, itemView);
 
@@ -146,9 +150,9 @@ public class ChatRecyclerViewAdapter extends RealmRecyclerViewAdapter<ChatMessag
 
             if (userBackground != null) {
                 if (msg.sent != null && msg.sent.equals("true") && sendingUser != null) {
-                    DataBindingUtils.setRoundedBackgroundInt(userBackground, sendingUser.getContributorColor());
+                    DataBindingUtils.INSTANCE.setRoundedBackgroundInt(userBackground, sendingUser.getContributorColor());
                 } else {
-                    DataBindingUtils.setRoundedBackgroundInt(userBackground, msg.getContributorColor());
+                    DataBindingUtils.INSTANCE.setRoundedBackgroundInt(userBackground, msg.getContributorColor());
                 }
             }
 
@@ -167,7 +171,7 @@ public class ChatRecyclerViewAdapter extends RealmRecyclerViewAdapter<ChatMessag
                 userLabel.setOnClickListener(view -> userLabelClickEvents.onNext(msg.uuid));
             }
 
-            DataBindingUtils.setForegroundTintColor(userLabel, msg.getContributorForegroundColor());
+            DataBindingUtils.INSTANCE.setForegroundTintColor(userLabel, msg.getContributorForegroundColor());
 
             if (messageText != null) {
                 messageText.setText(chatMessage.parsedText);
@@ -191,6 +195,7 @@ public class ChatRecyclerViewAdapter extends RealmRecyclerViewAdapter<ChatMessag
         }
 
         private void setLikeProperties() {
+            likeBackground.setVisibility(isTavern ? View.VISIBLE : View.INVISIBLE);
             tvLikes.setText("+" + chatMessage.getLikeCount());
 
             int backgroundColorRes;
@@ -209,7 +214,7 @@ public class ChatRecyclerViewAdapter extends RealmRecyclerViewAdapter<ChatMessag
                 foregroundColorRes = R.color.tavern_nolikes_foreground;
             }
 
-            DataBindingUtils.setRoundedBackground(likeBackground, ContextCompat.getColor(context, backgroundColorRes));
+            DataBindingUtils.INSTANCE.setRoundedBackground(likeBackground, ContextCompat.getColor(context, backgroundColorRes));
             tvLikes.setTextColor(ContextCompat.getColor(context, foregroundColorRes));
         }
 

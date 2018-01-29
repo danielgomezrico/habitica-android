@@ -7,15 +7,15 @@ import android.support.v7.app.AlertDialog;
 
 import com.habitrpg.android.habitica.R;
 import com.habitrpg.android.habitica.components.AppComponent;
-import com.habitrpg.android.habitica.data.ApiClient;
 import com.habitrpg.android.habitica.data.UserRepository;
 import com.habitrpg.android.habitica.helpers.RxErrorHandler;
 import com.habitrpg.android.habitica.models.user.Gear;
-import com.habitrpg.android.habitica.models.user.User;
 import com.habitrpg.android.habitica.models.user.Hair;
 import com.habitrpg.android.habitica.models.user.Items;
 import com.habitrpg.android.habitica.models.user.Outfit;
 import com.habitrpg.android.habitica.models.user.Preferences;
+import com.habitrpg.android.habitica.models.user.Stats;
+import com.habitrpg.android.habitica.models.user.User;
 import com.habitrpg.android.habitica.ui.AvatarView;
 
 import javax.inject.Inject;
@@ -125,22 +125,22 @@ public class ClassSelectionActivity extends BaseActivity implements Action1<User
 
     @OnClick(R.id.healerWrapper)
     public void healerSelected() {
-        displayConfirmationDialogForClass(getString(R.string.healer), "healer");
+        displayConfirmationDialogForClass(getString(R.string.healer), Stats.HEALER);
     }
 
     @OnClick(R.id.mageWrapper)
     public void mageSelected() {
-        displayConfirmationDialogForClass(getString(R.string.mage), "wizard");
+        displayConfirmationDialogForClass(getString(R.string.mage), Stats.MAGE);
     }
 
     @OnClick(R.id.rogueWrapper)
     public void rogueSelected() {
-        displayConfirmationDialogForClass(getString(R.string.rogue), "rogue");
+        displayConfirmationDialogForClass(getString(R.string.rogue), Stats.ROGUE);
     }
 
     @OnClick(R.id.warriorWrapper)
     public void warriorSelected() {
-        displayConfirmationDialogForClass(getString(R.string.warrior), "warrior");
+        displayConfirmationDialogForClass(getString(R.string.warrior), Stats.WARRIOR);
     }
 
     @OnClick(R.id.optOutWrapper)

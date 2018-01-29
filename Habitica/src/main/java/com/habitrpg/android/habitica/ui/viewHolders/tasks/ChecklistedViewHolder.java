@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.habitrpg.android.habitica.R;
@@ -34,7 +33,7 @@ import rx.schedulers.Schedulers;
 
 public abstract class ChecklistedViewHolder extends BaseTaskViewHolder implements CompoundButton.OnCheckedChangeListener {
 
-    static Integer expandedChecklistRow = null;
+    private static Integer expandedChecklistRow = null;
 
     @BindView(R.id.checkBoxHolder)
     ViewGroup checkboxHolder;
@@ -60,7 +59,7 @@ public abstract class ChecklistedViewHolder extends BaseTaskViewHolder implement
 
     @Override
     public void bindHolder(Task newTask, int position) {
-        boolean completed = newTask.completed;
+        boolean completed = newTask.getCompleted();
         if (newTask.isPendingApproval()) {
             completed = false;
         }
@@ -76,9 +75,9 @@ public abstract class ChecklistedViewHolder extends BaseTaskViewHolder implement
         this.checklistView.removeAllViews();
         this.updateChecklistDisplay();
 
-        this.checklistIndicatorWrapper.setVisibility(newTask.checklist.size() == 0 ? View.GONE : View.VISIBLE);
+        this.checklistIndicatorWrapper.setVisibility(newTask.getChecklist().size() == 0 ? View.GONE : View.VISIBLE);
         if (this.rightBorderView != null) {
-            this.rightBorderView.setVisibility(newTask.checklist.size() == 0 ? View.VISIBLE : View.GONE);
+            this.rightBorderView.setVisibility(newTask.getChecklist().size() == 0 ? View.VISIBLE : View.GONE);
             if (newTask.getCompleted()) {
                 this.rightBorderView.setBackgroundResource(newTask.getLightTaskColor());
             } else {
@@ -93,13 +92,13 @@ public abstract class ChecklistedViewHolder extends BaseTaskViewHolder implement
     public void updateChecklistDisplay() {
         //This needs to be a LinearLayout, as ListViews can not be inside other ListViews.
         if (this.checklistView != null) {
-            if (this.shouldDisplayExpandedChecklist() && this.task.checklist != null) {
+            if (this.shouldDisplayExpandedChecklist()) {
                 LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                if (this.task.checklist.isValid()) {
-                    for (ChecklistItem item : this.task.checklist) {
+                if (this.task.getChecklist().isValid()) {
+                    for (ChecklistItem item : this.task.getChecklist()) {
                         LinearLayout itemView = (LinearLayout) layoutInflater.inflate(R.layout.checklist_item_row, this.checklistView, false);
-                        CheckBox checkbox = (CheckBox) itemView.findViewById(R.id.checkBox);
-                        EmojiTextView textView = (EmojiTextView) itemView.findViewById(R.id.checkedTextView);
+                        CheckBox checkbox = itemView.findViewById(R.id.checkBox);
+                        EmojiTextView textView = itemView.findViewById(R.id.checkedTextView);
                         // Populate the data into the template view using the data object
                         textView.setText(item.getText());
 

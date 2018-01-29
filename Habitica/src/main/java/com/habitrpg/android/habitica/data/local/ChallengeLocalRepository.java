@@ -2,9 +2,7 @@ package com.habitrpg.android.habitica.data.local;
 
 
 import com.habitrpg.android.habitica.models.social.Challenge;
-import com.habitrpg.android.habitica.models.social.Group;
 import com.habitrpg.android.habitica.models.tasks.Task;
-import com.habitrpg.android.habitica.models.user.User;
 
 import java.util.List;
 
@@ -20,4 +18,6 @@ public interface ChallengeLocalRepository extends BaseLocalRepository {
     Observable<RealmResults<Challenge>> getUserChallenges(String userId);
 
     void setParticipating(Challenge challenge, boolean isParticipating);
+
+    void saveChallenges(List<Challenge> challenges);
 }

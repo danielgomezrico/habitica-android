@@ -1,4 +1,7 @@
 <resources>
+    <attr name="statsColor" format="color" />
+    <attr name="statsTitle" format="string" />
+    <attr name="hasLightBackground" format="boolean" />
     <declare-styleable name="AvatarView">
         <attr name="showBackground" format="boolean" />
         <attr name="showMount" format="boolean" />
@@ -38,8 +41,28 @@
     </declare-styleable>
     <declare-styleable name="CurrencyView">
         <attr name="currency" format="string" />
+        <attr name="hasLightBackground" />
     </declare-styleable>
     <declare-styleable name="CurrencyViews">
-        <attr name="hasLightBackground" format="boolean" />
+        <attr name="hasLightBackground" />
+    </declare-styleable>
+    <declare-styleable name="FixValuesEditText">
+        <attr name="fixIconName" format="string" />
+        <attr name="title" format="string" />
+        <attr name="iconBgColor" format="color" />
+        <attr name="hintStyle" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="StatsView">
+        <attr name="titleBackgroundColor" format="color" />
+        <attr name="statsColor" />
+        <attr name="statsTitle" />
+    </declare-styleable>
+    <declare-styleable name="EquipmentItemRow">
+        <attr name="equipmentTitle" format="string" />
+    </declare-styleable>
+    <declare-styleable name="StatsSliderView">
+        <attr name="statsColor" />
+        <attr name="statsTextColor" format="color" />
+        <attr name="statsTitle" />
     </declare-styleable>
 </resources>

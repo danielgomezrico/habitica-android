@@ -2,7 +2,6 @@ package com.habitrpg.android.habitica.ui;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
 import android.view.View;
@@ -115,7 +114,7 @@ public class ItemDetailDialog extends AlertDialog {
 
     public void setImage(String imageName) {
         itemImageView.setVisibility(View.VISIBLE);
-        DataBindingUtils.loadImage(itemImageView, imageName);
+        DataBindingUtils.INSTANCE.loadImage(itemImageView, imageName);
     }
 
     public void setBuyListener(OnClickListener listener) {

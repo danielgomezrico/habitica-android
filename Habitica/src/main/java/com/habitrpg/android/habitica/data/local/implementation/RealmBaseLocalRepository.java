@@ -1,14 +1,13 @@
 package com.habitrpg.android.habitica.data.local.implementation;
 
 import com.habitrpg.android.habitica.data.local.BaseLocalRepository;
-import com.habitrpg.android.habitica.models.tasks.Task;
 
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
 
-abstract class RealmBaseLocalRepository implements BaseLocalRepository {
+public abstract class RealmBaseLocalRepository implements BaseLocalRepository {
 
     Realm realm;
 

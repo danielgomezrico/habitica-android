@@ -42,11 +42,11 @@ public class ChallengeListFragment extends BaseMainFragment implements SwipeRefr
     @Named(AppModule.NAMED_USER_ID)
     String userId;
 
-    @BindView(R.id.refresh_layout)
+    @BindView(R.id.refreshLayout)
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.recyclerView)
     RecyclerViewEmptySupport recyclerView;
-    @BindView(R.id.empty_view)
+    @BindView(R.id.emptyView)
     public View emptyView;
 
     private ChallengesListViewAdapter challengeAdapter;
@@ -72,7 +72,7 @@ public class ChallengeListFragment extends BaseMainFragment implements SwipeRefr
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_challengeslist, container, false);
-        unbinder = ButterKnife.bind(this, v);
+        setUnbinder(ButterKnife.bind(this, v));
 
         challengeAdapter = new ChallengesListViewAdapter(null, true, viewUserChallengesOnly, userId);
 
@@ -144,10 +144,12 @@ public class ChallengeListFragment extends BaseMainFragment implements SwipeRefr
 
 
         RelativeLayout badgeLayout = (RelativeLayout) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        TextView filterCountTextView = (TextView) badgeLayout.findViewById(R.id.badge_textview);
-        filterCountTextView.setText(null);
-        filterCountTextView.setVisibility(View.GONE);
-        badgeLayout.setOnClickListener(view -> showFilterDialog());
+        if (badgeLayout != null) {
+            TextView filterCountTextView = badgeLayout.findViewById(R.id.badge_textview);
+            filterCountTextView.setText(null);
+            filterCountTextView.setVisibility(View.GONE);
+            badgeLayout.setOnClickListener(view -> showFilterDialog());
+        }
     }
 
     private void showFilterDialog() {

@@ -47,7 +47,7 @@ public class ItemRecyclerFragment extends BaseFragment {
     private static final String ITEM_TYPE_KEY = "CLASS_TYPE_KEY";
     @BindView(R.id.recyclerView)
     public RecyclerViewEmptySupport recyclerView;
-    @BindView(R.id.empty_view)
+    @BindView(R.id.emptyView)
     public View emptyView;
     @BindView(R.id.empty_text_view)
     public TextView emptyTextView;
@@ -76,7 +76,7 @@ public class ItemRecyclerFragment extends BaseFragment {
         if (view == null) {
             view = inflater.inflate(R.layout.fragment_items, container, false);
         }
-        unbinder = ButterKnife.bind(this, view);
+        setUnbinder(ButterKnife.bind(this, view));
 
         recyclerView.setEmptyView(emptyView);
         emptyTextView.setText(getString(R.string.empty_items, itemTypeText));
@@ -106,15 +106,15 @@ public class ItemRecyclerFragment extends BaseFragment {
             }
             recyclerView.setAdapter(adapter);
 
-            compositeSubscription.add(adapter.getSellItemEvents()
+            getCompositeSubscription().add(adapter.getSellItemEvents()
                     .flatMap(item -> inventoryRepository.sellItem(user, item))
                     .subscribe(item -> {}, RxErrorHandler.handleEmptyError()));
 
-            compositeSubscription.add(adapter.getQuestInvitationEvents()
+            getCompositeSubscription().add(adapter.getQuestInvitationEvents()
                     .flatMap(quest -> inventoryRepository.inviteToQuest(quest))
                             .subscribe(group -> {
                                 OpenMenuItemCommand event1 = new OpenMenuItemCommand();
-                                event1.identifier = MainDrawerBuilder.SIDEBAR_PARTY;
+                                event1.identifier = MainDrawerBuilder.INSTANCE.getSIDEBAR_PARTY();
                                 EventBus.getDefault().post(event1);
                             }, RxErrorHandler.handleEmptyError()));
         }
@@ -208,7 +208,7 @@ public class ItemRecyclerFragment extends BaseFragment {
             }
         }, RxErrorHandler.handleEmptyError());
 
-        compositeSubscription.add(inventoryRepository.getOwnedPets().subscribe(adapter::setOwnedPets, RxErrorHandler.handleEmptyError()));
+        getCompositeSubscription().add(inventoryRepository.getOwnedPets().subscribe(adapter::setOwnedPets, RxErrorHandler.handleEmptyError()));
     }
 
     @OnClick(R.id.openMarketButton)
@@ -224,7 +224,7 @@ public class ItemRecyclerFragment extends BaseFragment {
 
     private void openMarket() {
         OpenMenuItemCommand command = new OpenMenuItemCommand();
-        command.identifier = MainDrawerBuilder.SIDEBAR_SHOPS;
+        command.identifier = MainDrawerBuilder.INSTANCE.getSIDEBAR_SHOPS();
         EventBus.getDefault().post(command);
     }
 }

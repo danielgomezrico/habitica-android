@@ -1,16 +1,14 @@
 package com.habitrpg.android.habitica.ui.adapter;
 
-import com.habitrpg.android.habitica.R;
-import com.habitrpg.android.habitica.models.tasks.Task;
-
-import android.databinding.DataBindingUtil;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.habitrpg.android.habitica.R;
+import com.habitrpg.android.habitica.models.tasks.Task;
 
 import java.util.UUID;
 
@@ -85,12 +83,12 @@ public class SkillTasksRecyclerViewAdapter extends RealmRecyclerViewAdapter<Task
 
         void bindHolder(Task task) {
             this.task = task;
-            titleTextView.setText(task.text);
-            if (task.notes == null || task.notes.length() == 0) {
+            titleTextView.setText(task.getText());
+            if (task.getNotes() == null || task.getNotes().length() == 0) {
                 notesTextView.setVisibility(View.GONE);
             } else {
                 notesTextView.setVisibility(View.VISIBLE);
-                notesTextView.setText(task.notes);
+                notesTextView.setText(task.getNotes());
             }
             rightBorderView.setBackgroundResource(task.getLightTaskColor());
         }

@@ -40,7 +40,7 @@ public class StableRecyclerFragment extends BaseFragment {
 
     @BindView(R.id.recyclerView)
     public RecyclerViewEmptySupport recyclerView;
-    @BindView(R.id.empty_view)
+    @BindView(R.id.emptyView)
     public TextView emptyView;
     public StableRecyclerAdapter adapter;
     public String itemType;
@@ -59,7 +59,7 @@ public class StableRecyclerFragment extends BaseFragment {
             setupViews = true;
         }
 
-        unbinder = ButterKnife.bind(this, view);
+        setUnbinder(ButterKnife.bind(this, view));
 
         if (setupViews) {
             recyclerView.setEmptyView(emptyView);
@@ -84,8 +84,8 @@ public class StableRecyclerFragment extends BaseFragment {
         adapter = (StableRecyclerAdapter) recyclerView.getAdapter();
         if (adapter == null) {
             adapter = new StableRecyclerAdapter();
-            adapter.activity = (MainActivity) this.getActivity();
-            adapter.itemType = this.itemType;
+            adapter.setActivity((MainActivity) this.getActivity());
+            adapter.setItemType(this.itemType);
             recyclerView.setAdapter(adapter);
             recyclerView.setItemAnimator(new SafeDefaultItemAnimator());
         }

@@ -31,7 +31,6 @@ import com.habitrpg.android.habitica.models.AvatarPreferences;
 import com.habitrpg.android.habitica.models.user.Buffs;
 import com.habitrpg.android.habitica.models.user.Hair;
 import com.habitrpg.android.habitica.models.user.Outfit;
-import com.habitrpg.android.habitica.models.user.Preferences;
 
 import java.util.Collections;
 import java.util.EnumMap;
@@ -505,7 +504,7 @@ public class AvatarView extends View {
         initAvatarRectMatrix();
 
         // draw only when user is set
-        if (avatar == null) return;
+        if (avatar == null || !avatar.isValid()) return;
 
         // request image layers if not yet processed
         if (multiDraweeHolder.size() == 0) {

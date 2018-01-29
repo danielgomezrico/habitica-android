@@ -92,16 +92,16 @@ public class AvatarWithBarsViewModel {
             lvlText.setText(context.getString(R.string.user_level_with_class, user.getStats().getLvl(), userClass.substring(0, 1).toUpperCase(Locale.getDefault()) + userClass.substring(1)));
             Drawable drawable = null;
             switch (stats.getHabitClass()) {
-                case "warrior":
+                case Stats.WARRIOR:
                     drawable = new BitmapDrawable(context.getResources(), HabiticaIconsHelper.imageOfWarriorDarkBg());
                     break;
-                case "rogue":
+                case Stats.ROGUE:
                     drawable = new BitmapDrawable(context.getResources(), HabiticaIconsHelper.imageOfRogueDarkBg());
                     break;
-                case "wizard":
+                case Stats.MAGE:
                     drawable = new BitmapDrawable(context.getResources(), HabiticaIconsHelper.imageOfMageDarkBg());
                     break;
-                case "healer":
+                case Stats.HEALER:
                     drawable = new BitmapDrawable(context.getResources(), HabiticaIconsHelper.imageOfHealerDarkBg());
                     break;
             }
@@ -163,7 +163,7 @@ public class AvatarWithBarsViewModel {
     @OnClick(R.id.avatarView)
     public void avatarViewClicked() {
         OpenMenuItemCommand event = new OpenMenuItemCommand();
-        event.identifier = MainDrawerBuilder.SIDEBAR_AVATAR;
+        event.identifier = MainDrawerBuilder.INSTANCE.getSIDEBAR_AVATAR();
         EventBus.getDefault().post(event);
     }
 

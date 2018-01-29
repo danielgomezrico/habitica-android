@@ -47,12 +47,14 @@ import com.habitrpg.android.habitica.helpers.FirstDayOfTheWeekHelper;
 import com.habitrpg.android.habitica.helpers.RemindersManager;
 import com.habitrpg.android.habitica.helpers.RemoteConfigManager;
 import com.habitrpg.android.habitica.helpers.RxErrorHandler;
+import com.habitrpg.android.habitica.helpers.TaskAlarmManager;
 import com.habitrpg.android.habitica.helpers.TaskFilterHelper;
 import com.habitrpg.android.habitica.models.Tag;
 import com.habitrpg.android.habitica.models.tasks.ChecklistItem;
 import com.habitrpg.android.habitica.models.tasks.Days;
 import com.habitrpg.android.habitica.models.tasks.RemindersItem;
 import com.habitrpg.android.habitica.models.tasks.Task;
+import com.habitrpg.android.habitica.models.user.Stats;
 import com.habitrpg.android.habitica.modules.AppModule;
 import com.habitrpg.android.habitica.ui.WrapContentRecyclerViewLayoutManager;
 import com.habitrpg.android.habitica.ui.adapter.tasks.CheckListAdapter;
@@ -231,7 +233,6 @@ public class TaskFormActivity extends BaseActivity implements AdapterView.OnItem
     @Inject
     TaskFilterHelper taskFilterHelper;
     @Inject
-
     TaskRepository taskRepository;
     @Inject
     TagRepository tagRepository;
@@ -240,6 +241,8 @@ public class TaskFormActivity extends BaseActivity implements AdapterView.OnItem
     String userId;
     @Inject
     RemoteConfigManager remoteConfigManager;
+    @Inject
+    TaskAlarmManager taskAlarmManager;
 
     private Task task;
     private boolean taskBasedAllocation;
@@ -282,7 +285,7 @@ public class TaskFormActivity extends BaseActivity implements AdapterView.OnItem
         if(bundle.containsKey(PARCELABLE_TASK)){
             task = bundle.getParcelable(PARCELABLE_TASK);
             if (task != null) {
-                taskType = task.type;
+                taskType = task.getType();
             }
         }
 
@@ -981,9 +984,9 @@ public class TaskFormActivity extends BaseActivity implements AdapterView.OnItem
         if (!task.isValid()) {
             return;
         }
-        taskText.setText(task.text);
-        taskNotes.setText(task.notes);
-        taskValue.setText(String.format(Locale.getDefault(), "%.2f", task.value));
+        taskText.setText(task.getText());
+        taskNotes.setText(task.getNotes());
+        taskValue.setText(String.format(Locale.getDefault(), "%.2f", task.getValue()));
 
         for (Tag tag : task.getTags()) {
             selectedTags.add(tag);
@@ -1008,27 +1011,27 @@ public class TaskFormActivity extends BaseActivity implements AdapterView.OnItem
         String attribute = task.getAttribute();
         if (attribute != null) {
             switch (attribute) {
-                case Task.ATTRIBUTE_STRENGTH:
+                case Stats.STRENGTH:
                     taskAttributeSpinner.setSelection(0);
                     break;
-                case Task.ATTRIBUTE_INTELLIGENCE:
+                case Stats.INTELLIGENCE:
                     taskAttributeSpinner.setSelection(1);
                     break;
-                case Task.ATTRIBUTE_CONSTITUTION:
+                case Stats.CONSTITUTION:
                     taskAttributeSpinner.setSelection(2);
                     break;
-                case Task.ATTRIBUTE_PERCEPTION:
+                case Stats.PERCEPTION:
                     taskAttributeSpinner.setSelection(3);
                     break;
             }
         }
 
-        if (task.type.equals("habit")) {
+        if (task.getType().equals("habit")) {
             positiveCheckBox.setChecked(task.getUp());
             negativeCheckBox.setChecked(task.getDown());
         }
 
-        if (task.type.equals("daily")) {
+        if (task.getType().equals("daily")) {
 
             if (task.getStartDate() != null) {
                 startDateListener.setCalendar(task.getStartDate());
@@ -1056,7 +1059,7 @@ public class TaskFormActivity extends BaseActivity implements AdapterView.OnItem
             populateRepeatables(task);
         }
 
-        if (task.type.equals("todo")) {
+        if (task.getType().equals("todo")) {
             if (task.getDueDate() != null) {
                 dueDateCheckBox.setChecked(true);
                 dueDateListener.setCalendar(task.getDueDate());
@@ -1094,8 +1097,8 @@ public class TaskFormActivity extends BaseActivity implements AdapterView.OnItem
 
         taskRepository.executeTransaction(realm -> {
             try {
-                task.text = text;
-                task.notes = MarkdownParser.parseCompiled(taskNotes.getText());
+                task.setText(text);
+                task.setNotes(MarkdownParser.parseCompiled(taskNotes.getText()));
             } catch (IllegalArgumentException ignored) {
 
             }
@@ -1132,25 +1135,25 @@ public class TaskFormActivity extends BaseActivity implements AdapterView.OnItem
             }
 
             if (!taskBasedAllocation) {
-                task.setAttribute(Task.ATTRIBUTE_STRENGTH);
+                task.setAttribute(Stats.STRENGTH);
             } else {
                 switch (taskAttributeSpinner.getSelectedItemPosition()) {
                     case 0:
-                        task.setAttribute(Task.ATTRIBUTE_STRENGTH);
+                        task.setAttribute(Stats.STRENGTH);
                         break;
                     case 1:
-                        task.setAttribute(Task.ATTRIBUTE_INTELLIGENCE);
+                        task.setAttribute(Stats.INTELLIGENCE);
                         break;
                     case 2:
-                        task.setAttribute(Task.ATTRIBUTE_CONSTITUTION);
+                        task.setAttribute(Stats.CONSTITUTION);
                         break;
                     case 3:
-                        task.setAttribute(Task.ATTRIBUTE_PERCEPTION);
+                        task.setAttribute(Stats.PERCEPTION);
                         break;
                 }
             }
 
-            switch (task.type != null ? task.type : "") {
+            switch (task.getType() != null ? task.getType() : "") {
                 case "habit": {
                     task.setUp(positiveCheckBox.isChecked());
                     task.setDown(negativeCheckBox.isChecked());
@@ -1285,14 +1288,15 @@ public class TaskFormActivity extends BaseActivity implements AdapterView.OnItem
             this.task.setType(taskType);
         }
 
-        if (this.saveTask(this.task)) {
+        if (this.saveTask(this.task) && task.isValid()) {
             //send back to other elements.
-            if (TaskFormActivity.this.task.getId() == null) {
+            if (TaskFormActivity.this.task.getId() == null || TaskFormActivity.this.task.getId().length() == 0) {
                 taskRepository.createTaskInBackground(task);
             } else {
                 taskRepository.updateTaskInBackground(task);
             }
-
+            Task unmanagedTask = taskRepository.getUnmanagedCopy(task);
+            taskAlarmManager.scheduleAlarmsForTask(unmanagedTask);
         }
     }
 

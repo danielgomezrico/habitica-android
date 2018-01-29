@@ -2,8 +2,6 @@ package com.habitrpg.android.habitica.ui.activities;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.databinding.ObservableArrayList;
-import android.databinding.ObservableList;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -55,6 +53,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -147,7 +146,7 @@ public class ChallengeDetailActivity extends BaseActivity {
 
         String challengeId = extras.getString(CHALLENGE_ID);
 
-        ObservableList<Task> fullList = new ObservableArrayList<>();
+        List<Task> fullList = new ArrayList<>();
 
         userRepository.getUser(userId).first().subscribe(user -> {
             ChallengeDetailActivity.this.user = user;
@@ -166,7 +165,7 @@ public class ChallengeDetailActivity extends BaseActivity {
                         ArrayList<Task> rewards = new ArrayList<>();
 
                         for (Map.Entry<String, Task> entry : taskList.tasks.entrySet()) {
-                            switch (entry.getValue().type) {
+                            switch (entry.getValue().getType()) {
                                 case Task.TYPE_TODO:
                                     todos.add(entry.getValue());
                                     break;
@@ -189,8 +188,8 @@ public class ChallengeDetailActivity extends BaseActivity {
                         if (!habits.isEmpty()) {
                             Task dividerTask = new Task();
                             dividerTask.setId("divhabits");
-                            dividerTask.type = "divider";
-                            dividerTask.text = "Challenge Habits";
+                            dividerTask.setType("divider");
+                            dividerTask.setText("Challenge Habits");
 
                             resultList.add(dividerTask);
                             resultList.addAll(habits);
@@ -200,8 +199,8 @@ public class ChallengeDetailActivity extends BaseActivity {
                         if (!dailies.isEmpty()) {
                             Task dividerTask = new Task();
                             dividerTask.setId("divdailies");
-                            dividerTask.type = "divider";
-                            dividerTask.text = "Challenge Dailies";
+                            dividerTask.setType("divider");
+                            dividerTask.setText("Challenge Dailies");
 
                             resultList.add(dividerTask);
                             resultList.addAll(dailies);
@@ -211,8 +210,8 @@ public class ChallengeDetailActivity extends BaseActivity {
                         if (!todos.isEmpty()) {
                             Task dividerTask = new Task();
                             dividerTask.setId("divtodos");
-                            dividerTask.type = "divider";
-                            dividerTask.text = "Challenge To-Dos";
+                            dividerTask.setType("divider");
+                            dividerTask.setText("Challenge To-Dos");
 
                             resultList.add(dividerTask);
                             resultList.addAll(todos);
@@ -221,8 +220,8 @@ public class ChallengeDetailActivity extends BaseActivity {
                         if (!rewards.isEmpty()) {
                             Task dividerTask = new Task();
                             dividerTask.setId("divrewards");
-                            dividerTask.type = "divider";
-                            dividerTask.text = "Challenge Rewards";
+                            dividerTask.setType("divider");
+                            dividerTask.setText("Challenge Rewards");
 
                             resultList.add(dividerTask);
                             resultList.addAll(rewards);
@@ -242,7 +241,7 @@ public class ChallengeDetailActivity extends BaseActivity {
         }
     }
 
-    private void createTaskRecyclerFragment(ObservableList<Task> fullList) {
+    private void createTaskRecyclerFragment(List<Task> fullList) {
         ChallengeTasksRecyclerViewFragment fragment = ChallengeTasksRecyclerViewFragment.newInstance(user, fullList);
 
         if (getSupportFragmentManager().getFragments() == null) {
@@ -380,7 +379,7 @@ public class ChallengeDetailActivity extends BaseActivity {
 
     @Subscribe
     public void onEvent(TaskCheckedCommand event) {
-        switch (event.Task.type) {
+        switch (event.Task.getType()) {
             case Task.TYPE_DAILY: {
                 dailyCheckUseCase.observable(new DailyCheckUseCase.RequestValues(user, event.Task, !event.Task.getCompleted()))
                         .subscribe(this::onTaskDataReceived, RxErrorHandler.handleEmptyError());
@@ -414,7 +413,7 @@ public class ChallengeDetailActivity extends BaseActivity {
         }
 
 
-        if (event.Reward.specialTag == null || !event.Reward.specialTag.equals("item")) {
+        if (event.Reward.getSpecialTag() == null || !event.Reward.getSpecialTag().equals("item")) {
 
             buyRewardUseCase.observable(new BuyRewardUseCase.RequestValues(user, event.Reward))
                     .subscribe(res -> HabiticaSnackbar.showSnackbar(floatingMenuWrapper, getString(R.string.notification_purchase_reward), HabiticaSnackbar.SnackbarDisplayType.NORMAL), RxErrorHandler.handleEmptyError());

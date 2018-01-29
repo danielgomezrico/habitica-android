@@ -258,8 +258,8 @@ public class MainActivity extends BaseActivity implements TutorialView.OnTutoria
         setupToolbar(toolbar);
 
         avatarInHeader = new AvatarWithBarsViewModel(this, avatar_with_bars);
-        accountHeader = MainDrawerBuilder.CreateDefaultAccountHeader(this).build();
-        drawer = MainDrawerBuilder.CreateDefaultBuilderSettings(this, sharedPreferences, toolbar, accountHeader)
+        accountHeader = MainDrawerBuilder.INSTANCE.createDefaultAccountHeader(this).build();
+        drawer = MainDrawerBuilder.INSTANCE.createDefaultBuilderSettings(this, sharedPreferences, toolbar, accountHeader)
                 .build();
         drawer.setSelectionAtPosition(1, false);
         sideAvatarView = new AvatarView(this, true, false, false);
@@ -365,7 +365,11 @@ public class MainActivity extends BaseActivity implements TutorialView.OnTutoria
         } else {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in, android.R.anim.fade_out);
-            transaction.replace(R.id.fragment_container, fragment).addToBackStack(null).commitAllowingStateLoss();
+            transaction.replace(R.id.fragment_container, fragment);
+            if (fragment.addToBackStack()) {
+                transaction.addToBackStack(null);
+            }
+            transaction.commitAllowingStateLoss();
         }
     }
 
@@ -404,7 +408,7 @@ public class MainActivity extends BaseActivity implements TutorialView.OnTutoria
         if (numberOfUnreadPms <= 0) {
             newInboxItem = new PrimaryDrawerItem()
                     .withName(this.getString(R.string.sidebar_inbox))
-                    .withIdentifier(MainDrawerBuilder.SIDEBAR_INBOX);
+                    .withIdentifier(MainDrawerBuilder.INSTANCE.getSIDEBAR_INBOX());
         } else {
             String numberOfUnreadPmsLabel = String.valueOf(numberOfUnreadPms);
             BadgeStyle badgeStyle = new BadgeStyle()
@@ -413,13 +417,13 @@ public class MainActivity extends BaseActivity implements TutorialView.OnTutoria
 
             newInboxItem = new PrimaryDrawerItem()
                     .withName(this.getString(R.string.sidebar_inbox))
-                    .withIdentifier(MainDrawerBuilder.SIDEBAR_INBOX)
+                    .withIdentifier(MainDrawerBuilder.INSTANCE.getSIDEBAR_INBOX())
                     .withBadge(numberOfUnreadPmsLabel)
                     .withBadgeStyle(badgeStyle);
         }
 
         if (this.drawer != null) {
-            this.drawer.updateItemAtPosition(newInboxItem, this.drawer.getPosition(MainDrawerBuilder.SIDEBAR_INBOX));
+            this.drawer.updateItemAtPosition(newInboxItem, this.drawer.getPosition(MainDrawerBuilder.INSTANCE.getSIDEBAR_INBOX()));
         }
     }
 
@@ -467,30 +471,35 @@ public class MainActivity extends BaseActivity implements TutorialView.OnTutoria
         }
 
         if (drawer != null) {
-            IDrawerItem item = drawer.getDrawerItem(MainDrawerBuilder.SIDEBAR_SKILLS);
+            IDrawerItem item = drawer.getDrawerItem(MainDrawerBuilder.INSTANCE.getSIDEBAR_SKILLS());
             if (!user.hasClass() && !hasSpecialItems) {
                 if (item != null) {
-                    drawer.removeItem(MainDrawerBuilder.SIDEBAR_SKILLS);
+                    drawer.removeItem(MainDrawerBuilder.INSTANCE.getSIDEBAR_SKILLS());
                 }
             } else {
-                IDrawerItem newItem;
+                PrimaryDrawerItem newItem = new PrimaryDrawerItem()
+                        .withName(this.getString(R.string.sidebar_skills))
+                        .withIdentifier(MainDrawerBuilder.INSTANCE.getSIDEBAR_SKILLS());
                 if (user.getStats().getLvl() < MIN_LEVEL_FOR_SKILLS && !hasSpecialItems) {
-                    newItem = new PrimaryDrawerItem()
-                            .withName(this.getString(R.string.sidebar_skills))
-                            .withEnabled(false)
-                            .withBadge(this.getString(R.string.unlock_lvl_11))
-                            .withIdentifier(MainDrawerBuilder.SIDEBAR_SKILLS);
-                } else {
-                    newItem = new PrimaryDrawerItem()
-                            .withName(this.getString(R.string.sidebar_skills))
-                            .withIdentifier(MainDrawerBuilder.SIDEBAR_SKILLS);
+                    newItem = newItem.withEnabled(false).withBadge(this.getString(R.string.unlock_lvl_11));
                 }
                 if (item == null) {
                     drawer.addItemAtPosition(newItem, 1);
                 } else {
                     drawer.updateItem(newItem);
-
                 }
+            }
+            IDrawerItem statsItem = drawer.getDrawerItem(MainDrawerBuilder.INSTANCE.getSIDEBAR_STATS());
+            PrimaryDrawerItem newStatsItem = new PrimaryDrawerItem()
+                    .withName(this.getString(R.string.sidebar_stats))
+                    .withIdentifier(MainDrawerBuilder.INSTANCE.getSIDEBAR_STATS());
+            if (user.getStats() != null && user.getStats().lvl >= 0 && user.getStats().points > 0) {
+                newStatsItem = newStatsItem.withBadge(this.getString(R.string.available_stats, user.getStats().points));
+            }
+            if (statsItem == null) {
+                drawer.addItemAtPosition(newStatsItem, 2);
+            } else {
+                drawer.updateItem(newStatsItem);
             }
         }
     }
@@ -574,8 +583,8 @@ public class MainActivity extends BaseActivity implements TutorialView.OnTutoria
             }
         }
 
-        if (event.Reward.specialTag != null && event.Reward.specialTag.equals("item")) {
-            inventoryRepository.buyItem(user, event.Reward.getId(), event.Reward.value)
+        if (event.Reward.getSpecialTag() != null && event.Reward.getSpecialTag().equals("item")) {
+            inventoryRepository.buyItem(user, event.Reward.getId(), event.Reward.getValue())
                     .subscribe(buyResponse -> {
                                 String snackbarMessage = getString(R.string.successful_purchase, event.Reward.getText());
                                 if (event.Reward.getId().equals("armoire")) {
@@ -588,14 +597,14 @@ public class MainActivity extends BaseActivity implements TutorialView.OnTutoria
                                     }
                                     soundManager.loadAndPlayAudio(SoundManager.SoundItemDrop);
                                 }
-                                showSnackbar(floatingMenuWrapper, null, snackbarMessage, new BitmapDrawable(getResources(), HabiticaIconsHelper.imageOfGold()), ContextCompat.getColor(this, R.color.yellow_10), "-"+event.Reward.value, SnackbarDisplayType.NORMAL);
+                                showSnackbar(floatingMenuWrapper, null, snackbarMessage, new BitmapDrawable(getResources(), HabiticaIconsHelper.imageOfGold()), ContextCompat.getColor(this, R.color.yellow_10), "-"+ event.Reward.getValue(), SnackbarDisplayType.NORMAL);
                             }, RxErrorHandler.handleEmptyError());
         } else {
             buyRewardUseCase.observable(new BuyRewardUseCase.RequestValues(user, event.Reward))
                     .subscribe(res -> showSnackbar(floatingMenuWrapper, null, getString(R.string.notification_purchase_reward),
                             new BitmapDrawable(getResources(), HabiticaIconsHelper.imageOfGold()),
                             ContextCompat.getColor(this, R.color.yellow_10),
-                            "-"+ ((int) event.Reward.value),
+                            "-"+ ((int) event.Reward.getValue()),
                             SnackbarDisplayType.DROP), RxErrorHandler.handleEmptyError());
         }
     }
@@ -610,7 +619,7 @@ public class MainActivity extends BaseActivity implements TutorialView.OnTutoria
     @Subscribe
     public void openGemPurchaseFragment(@Nullable OpenGemPurchaseFragmentCommand cmd) {
         if (drawer != null) {
-            drawer.setSelection(MainDrawerBuilder.SIDEBAR_PURCHASE);
+            drawer.setSelection(MainDrawerBuilder.INSTANCE.getSIDEBAR_PURCHASE());
         }
     }
 
@@ -638,7 +647,7 @@ public class MainActivity extends BaseActivity implements TutorialView.OnTutoria
                     FrameLayout petWrapper = (FrameLayout) View.inflate(this, R.layout.pet_imageview, null);
                     SimpleDraweeView petImageView = (SimpleDraweeView) petWrapper.findViewById(R.id.pet_imageview);
 
-                    DataBindingUtils.loadImage(petImageView, "Pet-" + event.usingEgg.getKey() + "-" + event.usingHatchingPotion.getKey());
+                    DataBindingUtils.INSTANCE.loadImage(petImageView, "Pet-" + event.usingEgg.getKey() + "-" + event.usingHatchingPotion.getKey());
                     String potionName = event.usingHatchingPotion.getText();
                     String eggName = event.usingEgg.getText();
                     AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
@@ -674,7 +683,7 @@ public class MainActivity extends BaseActivity implements TutorialView.OnTutoria
                         FrameLayout mountWrapper = (FrameLayout) View.inflate(this, R.layout.pet_imageview, null);
                         SimpleDraweeView mountImageView = (SimpleDraweeView) mountWrapper.findViewById(R.id.pet_imageview);
 
-                        DataBindingUtils.loadImage(mountImageView, "Mount_Icon_" + event.usingPet.getKey());
+                        DataBindingUtils.INSTANCE.loadImage(mountImageView, "Mount_Icon_" + event.usingPet.getKey());
                         String colorName = event.usingPet.getColorText();
                         String animalName = event.usingPet.getAnimalText();
                         AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
@@ -780,11 +789,11 @@ public class MainActivity extends BaseActivity implements TutorialView.OnTutoria
 
     private void displayTutorialStep(TutorialStep step, String text, boolean canBeDeferred) {
         TutorialView view = new TutorialView(this, step, this);
+        this.activeTutorialView = view;
         view.setTutorialText(text);
         view.onReaction = this;
         view.setCanBeDeferred(canBeDeferred);
         this.overlayLayout.addView(view);
-        this.activeTutorialView = view;
 
         Map<String, Object> additionalData = new HashMap<>();
         additionalData.put("eventLabel", step.getIdentifier() + "-android");
@@ -795,11 +804,11 @@ public class MainActivity extends BaseActivity implements TutorialView.OnTutoria
 
     private void displayTutorialStep(TutorialStep step, List<String> texts, boolean canBeDeferred) {
         TutorialView view = new TutorialView(this, step, this);
+        this.activeTutorialView = view;
         view.setTutorialTexts(texts);
         view.onReaction = this;
         view.setCanBeDeferred(canBeDeferred);
         this.overlayLayout.addView(view);
-        this.activeTutorialView = view;
 
         Map<String, Object> additionalData = new HashMap<>();
         additionalData.put("eventLabel", step.getIdentifier() + "-android");
@@ -827,7 +836,7 @@ public class MainActivity extends BaseActivity implements TutorialView.OnTutoria
 
     @Override
     public void onTutorialDeferred(TutorialStep step) {
-        step.setDisplayedOn(new Date());
+        taskRepository.executeTransaction(realm -> step.setDisplayedOn(new Date()));
 
         this.removeActiveTutorialView();
     }
@@ -865,7 +874,7 @@ public class MainActivity extends BaseActivity implements TutorialView.OnTutoria
 
     @Subscribe
     public void onEvent(TaskCheckedCommand event) {
-        switch (event.Task.type) {
+        switch (event.Task.getType()) {
             case Task.TYPE_DAILY: {
                 dailyCheckUseCase.observable(new DailyCheckUseCase.RequestValues(user, event.Task, !event.Task.getCompleted()))
                         .subscribe(this::displayTaskScoringResponse, RxErrorHandler.handleEmptyError());
@@ -946,7 +955,7 @@ public class MainActivity extends BaseActivity implements TutorialView.OnTutoria
 
         SimpleDraweeView imageView = (SimpleDraweeView) view.findViewById(R.id.imageView);
         String imageKey = event.notification.data.rewardKey.get(0);
-        DataBindingUtils.loadImage(imageView, imageKey);
+        DataBindingUtils.INSTANCE.loadImage(imageView, imageKey);
 
         String youEarnedMessage = this.getString(R.string.checkInRewardEarned, event.notification.data.rewardText);
 

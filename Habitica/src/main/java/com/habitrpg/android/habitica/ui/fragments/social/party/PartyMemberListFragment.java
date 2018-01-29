@@ -1,6 +1,5 @@
 package com.habitrpg.android.habitica.ui.fragments.social.party;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -33,7 +32,7 @@ public class PartyMemberListFragment extends BaseFragment {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    @BindView(R.id.refresh_layout)
+    @BindView(R.id.refreshLayout)
     SwipeRefreshLayout refreshLayout;
     private PartyMemberRecyclerViewAdapter adapter;
     private View view;
@@ -60,7 +59,7 @@ public class PartyMemberListFragment extends BaseFragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new PartyMemberRecyclerViewAdapter(null, true, getContext());
-        compositeSubscription.add(adapter.getUserClickedEvents().subscribe(userId -> FullProfileActivity.open(getContext(), userId), RxErrorHandler.handleEmptyError()));
+        getCompositeSubscription().add(adapter.getUserClickedEvents().subscribe(userId -> FullProfileActivity.open(getContext(), userId), RxErrorHandler.handleEmptyError()));
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new SafeDefaultItemAnimator());
 

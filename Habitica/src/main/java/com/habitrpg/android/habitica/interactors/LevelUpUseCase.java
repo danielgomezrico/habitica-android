@@ -12,9 +12,9 @@ import com.habitrpg.android.habitica.executors.PostExecutionThread;
 import com.habitrpg.android.habitica.executors.ThreadExecutor;
 import com.habitrpg.android.habitica.helpers.RxErrorHandler;
 import com.habitrpg.android.habitica.helpers.SoundManager;
-import com.habitrpg.android.habitica.models.user.User;
 import com.habitrpg.android.habitica.models.user.Stats;
 import com.habitrpg.android.habitica.models.user.SuppressedModals;
+import com.habitrpg.android.habitica.models.user.User;
 import com.habitrpg.android.habitica.ui.AvatarView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -41,7 +41,6 @@ public class LevelUpUseCase extends UseCase<LevelUpUseCase.RequestValues, Stats>
         return Observable.defer(() -> {
             soundManager.loadAndPlayAudio(SoundManager.SoundLevelUp);
 
-
             SuppressedModals suppressedModals = requestValues.user.getPreferences().getSuppressModals();
             if (suppressedModals != null) {
                 if (suppressedModals.getLevelUp()) {
@@ -54,9 +53,9 @@ public class LevelUpUseCase extends UseCase<LevelUpUseCase.RequestValues, Stats>
 
             View customView = requestValues.activity.getLayoutInflater().inflate(R.layout.dialog_levelup, null);
             if (customView != null) {
-                TextView detailView = (TextView) customView.findViewById(R.id.levelupDetail);
+                TextView detailView = customView.findViewById(R.id.levelupDetail);
                 detailView.setText(requestValues.activity.getString(R.string.levelup_detail, requestValues.newLevel));
-                AvatarView dialogAvatarView = (AvatarView) customView.findViewById(R.id.avatarView);
+                AvatarView dialogAvatarView = customView.findViewById(R.id.avatarView);
                 dialogAvatarView.setAvatar(requestValues.user);
             }
 

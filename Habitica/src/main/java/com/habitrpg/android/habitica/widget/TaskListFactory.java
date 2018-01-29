@@ -1,5 +1,14 @@
 package com.habitrpg.android.habitica.widget;
 
+import android.appwidget.AppWidgetManager;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
+import android.text.SpannableStringBuilder;
+import android.text.style.DynamicDrawableSpan;
+import android.widget.RemoteViews;
+import android.widget.RemoteViewsService;
+
 import com.habitrpg.android.habitica.HabiticaApplication;
 import com.habitrpg.android.habitica.R;
 import com.habitrpg.android.habitica.data.TaskRepository;
@@ -11,15 +20,6 @@ import com.habitrpg.android.habitica.ui.helpers.MarkdownParser;
 
 import net.pherth.android.emoji_library.EmojiHandler;
 
-import android.appwidget.AppWidgetManager;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
-import android.text.SpannableStringBuilder;
-import android.text.style.DynamicDrawableSpan;
-import android.widget.RemoteViews;
-import android.widget.RemoteViewsService;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +28,6 @@ import javax.inject.Named;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public abstract class TaskListFactory implements RemoteViewsService.RemoteViewsFactory {
     private final int widgetId;
@@ -65,7 +64,7 @@ public abstract class TaskListFactory implements RemoteViewsService.RemoteViewsF
         mainHandler.post(() -> taskRepository.getTasks(taskType, userID)
                 .first()
                 .flatMap(Observable::from)
-                .filter(task -> (task.type.equals(Task.TYPE_TODO) && !task.completed) || task.isDisplayedActive())
+                .filter(task -> (task.getType().equals(Task.TYPE_TODO) && !task.getCompleted()) || task.isDisplayedActive())
                 .toList()
                 .flatMap(tasks -> taskRepository.getTaskCopies(tasks))
                 .subscribeOn(AndroidSchedulers.mainThread())
@@ -107,7 +106,7 @@ public abstract class TaskListFactory implements RemoteViewsService.RemoteViewsF
         if (taskList.size() > position) {
             Task task = taskList.get(position);
 
-            CharSequence parsedText = MarkdownParser.parseMarkdown(task.text);
+            CharSequence parsedText = MarkdownParser.parseMarkdown(task.getText());
 
             SpannableStringBuilder builder = new SpannableStringBuilder(parsedText);
             EmojiHandler.addEmojis(this.context, builder, 16, DynamicDrawableSpan.ALIGN_BASELINE, 16, 0, -1, false);

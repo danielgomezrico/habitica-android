@@ -299,7 +299,7 @@
     <string name="equipped">Equipped</string>
     <string name="quest_cancel_message">Are you sure you want to cancel this quest? All invitation acceptances will be lost. The quest owner will retain possession of the quest scroll.</string>
     <string name="quest.invitation">Quest Invitation</string>
-    <string name="quest_begin_message">Are you sure you want to begin the quest? Once it is active, no additional party members can join the quest.</string>
+    <string name="quest_begin_message">Are you sure? Only %1$d of your %2$d party members have joined this quest! Quests start automatically when all players have joined or rejected the invitation.</string>
     <string name="quest.invitation.text">You have been invited to participate in a quest!</string>
     <string name="ago_1day">1 day ago</string>
     <string name="ago_days" >%d days ago</string>
@@ -337,16 +337,20 @@
     <string name="notification_pet_fed" >You fed your %1$s %2$s!</string>
     <string name="notification_purchase" >You purchased %s</string>
     <string name="notification_purchase_reward" >You purchased a reward</string>
-    <string name="sectionpets">Base Pets</string>
-    <string name="sectionpremiumPets">Magic Potion Pets</string>
-    <string name="sectionquestPets">Quest Pets</string>
-    <string name="sectionspecialPets">Rare Pets</string>
-    <string name="sectionmounts">Base Mounts</string>
-    <string name="sectionpremiumMounts">Magic Potion Mounts</string>
-    <string name="sectionquestMounts">Quest Mounts</string>
-    <string name="sectionspecialMounts">Rare Mounts</string>
+    <string name="sectionpets">Standard</string>
+    <string name="sectionpremiumPets">Magic Potion</string>
+    <string name="sectionquestPets">Quest</string>
+    <string name="sectionspecialPets">Rare</string>
+    <string name="sectionmounts">Standard</string>
+    <string name="sectionpremiumMounts">Magic Potion</string>
+    <string name="sectionquestMounts">Quest</string>
+    <string name="sectionspecialMounts">Rare</string>
     <string name="world_quest">World Quest</string>
-    <string name="inn_description">Rest in the Inn to prevent your undone Dailies from hurting you overnight! (Note: does not prevent you from receiving Boss damage.)</string>
+    <string name="inn_description">Need a break? Check into Daniel’s Inn to pause some of Habitica’s more difficult game mechanics:\n\n
+&#8226; Missed Dailies won’t damage you\n
+&#8226; Tasks won’t lose streaks or decay in color\n
+&#8226; Bosses won’t do damage for your missed Dailies\n
+&#8226; Your boss damage or collection quest items will stay pending until check-out</string>
     <string name="empty_items" >You don\'t have any %s</string>
     <string name="user_level" >Lvl %d</string>
     <string name="user_level_with_class" >Lvl %1$d %2$s</string>
@@ -368,7 +372,7 @@
     <string name="dialog_go_back">Go Back</string>
     <string name="opt_out_confirmation">Are you sure you want to Opt Out?</string>
     <string name="change_class">Change your class</string>
-    <string name="change_class_description">Change your class and refund your attribute points for 3 gems. You can assign attribute points through the website</string>
+    <string name="change_class_description">Change your class and refund your stat points for 3 gems.</string>
     <string name="enable_class">Enable Class System</string>
     <string name="changing_class_progress">Changing Class</string>
     <string name="by_email">By Email</string>
@@ -394,8 +398,10 @@
     <string name="market">Market</string>
     <string name="timeTravelers">Time Travelers</string>
     <string name="seasonalShop">Seasonal Shop</string>
-    <string name="empty_inbox">You don\'t have any Inbox messages. You can send a user a new message from their public chat messages!</string>
+    <string name="empty_inbox">You don\'t have any messages. You can send a user a new message from their public chat messages!</string>
     <string name="party_invite">Unlock by inviting friends</string>
+    <string name="login_incentive">Unlock by logging into Habitica regularly</string>
+    <string name="create_account">Unlock by creating an account</string>
     <string name="no_gold">Not enough Gold</string>
     <string name="no_potion">You don\'t need to buy an health potion</string>
     <string name="successful_purchase" >Purchased %1$s</string>
@@ -527,7 +533,7 @@
     <string name="warning">Warning</string>
     <string name="open_settings">Open Settings</string>
     <string name="dont_keep_activities_warning">It seems like you have the Developer option \“Don\'t keep Activities\” active. Currently this option causes issues with the habitica app, so we suggest disabling it.</string>
-    <string name="inbox">Inbox</string>
+    <string name="inbox">Messages</string>
     <string name="FAQ">Frequently Asked Questions</string>
     <string name="special">Special</string>
     <string name="gem_for_gold_description">Because you subscribe to Habitica, you can purchase a number of Gems each month using Gold.</string>
@@ -639,10 +645,10 @@
     <string name="experience_reward" formatted="false">%d Experience points</string>
     <string name="gold_reward" formatted="false">%d Gold</string>
     <string name="quest_owner_rewards">Quest Owner Rewards</string>
-    <string name="str_abbrv">Str:</string>
-    <string name="per_abbrv">Per:</string>
-    <string name="int_abbrv">Int:</string>
-    <string name="con_abbrv">Con:</string>
+    <string name="str_abbrv">Str</string>
+    <string name="per_abbrv">Per</string>
+    <string name="int_abbrv">Int</string>
+    <string name="con_abbrv">Con</string>
     <string name="reset_account">Reset Account</string>
     <string name="reset_account_description">WARNING! This resets many parts of your account. This is highly discouraged, but some people find it useful in the beginning after playing with the site for a short time.\n\nYou will lose all your levels, gold, and experience points. All your tasks (except those from challenges) will be deleted permanently and you will lose all of their historical data. You will lose all your equipment but you will be able to buy it all back, including all limited edition equipment or subscriber Mystery items that you already own (you will need to be in the correct class to re-buy class-specific gear). You will keep your current class and your pets and mounts. You might prefer to use an Orb of Rebirth instead, which is a much safer option and which will preserve your tasks and equipment.</string>
     <string name="delete_account">Delete Account</string>
@@ -666,7 +672,7 @@
     <string name="level">Level</string>
     <string name="streak_label">21-Day Streaks</string>
     <string name="stats">Stats</string>
-    <string name="fix_character_description">If you\'ve encountered a bug or made a mistake that unfairly changed your character (damage you shouldn\'t have taken, Gold you didn\'t really earn, etc.), you can manually correct your numbers here. Yes, this makes it possible to cheat: use this feature wisely, or you\'ll sabotage your own habit-building!</string>
+    <string name="fix_character_description">If you’ve encountered a bug or made a mistake that unfairly changed your character, you can manually correct those values here.</string>
     <string name="fix_character_values">Fix Character Values</string>
     <string name="saving">Saving</string>
     <string name="forgot_password_title">Email a Password Reset Link</string>
@@ -683,4 +689,39 @@
     <string name="authentication">Authentication</string>
     <string name="authentication_summary">Change your authentication options.</string>
     <string name="change_password">Change Password</string>
+    <string name="change_email">Change Email Address</string>
+    <string name="change_login_name">Change Login Name</string>
+    <string name="change">Change</string>
+    <string name="character_level">Character Level</string>
+    <string name="auto_allocate_points">Auto Allocate Points</string>
+    <string name="stat_guide">Stat Guide</string>
+    <string name="character_build">Character Build</string>
+    <string name="character_build_description">Each level earns you one point to assign to an attribute of your choice. You can do so manually, or let the game decide for you using one of the Automatic Allocation options.</string>
+    <string name="strength">Strength</string>
+    <string name="strength_description">Increases the bonus of critical hits and makes them more likely when scoring a task. Also increases damage dealt to bosses.</string>
+    <string name="intelligence">Intelligence</string>
+    <string name="intelligence_description">Increases EXP earned from completing tasks. Also increases your mana cap and how fast mana regenerates over time.</string>
+    <string name="constitution">Constitution</string>
+    <string name="constitution_description">Decreases the amount of damage taken from your tasks. Does not decrease the damage received from bosses.</string>
+    <string name="perception">Perception</string>
+    <string name="perception_description">Increases the likelihood of finding drops when completing Tasks, the daily drop-cap, Streak Bonuses, and the amount of gold awarded for Tasks.</string>
+    <string name="buffs">Buffs</string>
+    <string name="allocated">Allocated</string>
+    <string name="distribute_evenly">Distribute Evenly</string>
+    <string name="distribute_class">Distribute based on class</string>
+    <string name="distribute_task">Distribute based on task activity</string>
+    <string name="no_points_to_allocate">No Points to Allocate</string>
+    <string name="points_to_allocate" formatted="false">%d Points to Allocate</string>
+    <string name="distribute_evenly_help">Assigns the same number of points to each attribute.</string>
+    <string name="distribute_class_help">Assigns more points to the attributes important to your Class.</string>
+    <string name="distribute_task_help">Assigns points based on the Strength, Intelligence, Constitution, and Perception categories associated with the tasks you complete.</string>
+    <string name="allocating_points">Allocating Points</string>
+    <string name="class_equipment">Equipment</string>
+    <string name="equipment_empty">You already have all equipment! More will be released during the Grand Galas, near the solstices and equinoxes.</string>
+    <string name="classless">Classless</string>
+    <string name="class_equipment_shop_dialog">This item is only available to a specific class.\nYou can change your class from Settings.</string>
+    <string name="class_gear_disclaimer">You can only purchase gear for your current class</string>
+    <string name="available_stats" formatted="false">%d points</string>
+    <string name="toogle_emojis">Toogle Emojis</string>
+    <string name="tavern_description">Welcome to the Inn! Pull up a chair to chat, or take a break from your tasks.</string>
 </resources>

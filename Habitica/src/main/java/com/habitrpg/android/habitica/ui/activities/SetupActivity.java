@@ -17,8 +17,8 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 
-import com.habitrpg.android.habitica.api.HostConfig;
 import com.habitrpg.android.habitica.R;
+import com.habitrpg.android.habitica.api.HostConfig;
 import com.habitrpg.android.habitica.components.AppComponent;
 import com.habitrpg.android.habitica.data.ApiClient;
 import com.habitrpg.android.habitica.data.TaskRepository;
@@ -36,7 +36,6 @@ import com.habitrpg.android.habitica.ui.views.FadingViewPager;
 import com.viewpagerindicator.IconPageIndicator;
 import com.viewpagerindicator.IconPagerAdapter;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Calendar;
@@ -61,7 +60,7 @@ public class SetupActivity extends BaseActivity implements ViewPager.OnPageChang
     protected UserRepository userRepository;
     @Inject
     protected TaskRepository taskRepository;
-    @BindView(R.id.view_pager)
+    @BindView(R.id.viewPager)
     FadingViewPager pager;
     @BindView(R.id.nextButton)
     Button nextButton;

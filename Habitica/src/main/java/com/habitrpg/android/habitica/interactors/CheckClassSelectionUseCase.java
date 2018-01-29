@@ -1,11 +1,9 @@
 package com.habitrpg.android.habitica.interactors;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.habitrpg.android.habitica.HabiticaApplication;
 import com.habitrpg.android.habitica.events.SelectClassEvent;
 import com.habitrpg.android.habitica.executors.PostExecutionThread;
 import com.habitrpg.android.habitica.executors.ThreadExecutor;
@@ -31,7 +29,7 @@ public class CheckClassSelectionUseCase extends UseCase<CheckClassSelectionUseCa
             User user = requestValues.user;
 
             if(requestValues.selectClassEvent == null) {
-                if (user.getStats().getLvl() > 10 &&
+                if (user.getStats().getLvl() >= 10 &&
                         !user.getPreferences().getDisableClasses() &&
                         !user.getFlags().getClassSelected()) {
                     SelectClassEvent event = new SelectClassEvent();

@@ -62,6 +62,7 @@ import com.habitrpg.android.habitica.models.tasks.Task;
 import com.habitrpg.android.habitica.models.tasks.TaskList;
 import com.habitrpg.android.habitica.models.user.Items;
 import com.habitrpg.android.habitica.models.user.Purchases;
+import com.habitrpg.android.habitica.models.user.Stats;
 import com.habitrpg.android.habitica.models.user.User;
 import com.habitrpg.android.habitica.proxy.CrashlyticsProxy;
 import com.habitrpg.android.habitica.utils.BooleanAsIntAdapter;
@@ -108,6 +109,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLException;
 
@@ -195,12 +197,12 @@ public class ApiClientImpl implements Action1<Throwable>, ApiClient {
                     if (userAgent != null) {
                         builder = builder.header("user-agent", userAgent);
                     }
-                    builder = builder.addHeader("Authorization", "Basic " + BuildConfig.STAGING_KEY);
                     Request request = builder.method(original.method(), original.body())
                             .build();
                     lastAPICallURL = original.url().toString();
                     return chain.proceed(request);
                 })
+                .readTimeout(45, TimeUnit.SECONDS)
                 .build();
 
         Server server = new Server(this.hostConfig.getAddress());
@@ -848,8 +850,8 @@ public class ApiClientImpl implements Action1<Throwable>, ApiClient {
     }
 
     @Override
-    public Observable<Shop> fetchShopInventory(String identifier) {
-        return apiService.fetchShopInventory(identifier).compose(configureApiCallObserver());
+    public Observable<Shop> retrieveShopIventory(String identifier) {
+        return apiService.retrieveShopInventory(identifier).compose(configureApiCallObserver());
     }
 
     @Override
@@ -947,6 +949,9 @@ public class ApiClientImpl implements Action1<Throwable>, ApiClient {
 
     @Override
     public Observable<Void> togglePinnedItem(String pinType, String path) {
+        if (pinType == null) {
+            return Observable.just(null);
+        }
         return apiService.togglePinnedItem(pinType, path).compose(configureApiCallObserver());
     }
 
@@ -955,5 +960,52 @@ public class ApiClientImpl implements Action1<Throwable>, ApiClient {
         Map<String, String> data = new HashMap<>();
         data.put("email", email);
         return apiService.sendPasswordResetEmail(data).compose(configureApiCallObserver());
+    }
+
+    @Override
+    public Observable<Void> updateLoginName(String newLoginName, String password) {
+        Map<String, String> updateObject = new HashMap<>();
+        updateObject.put("username", newLoginName);
+        updateObject.put("password", password);
+        return apiService.updateLoginName(updateObject).compose(configureApiCallObserver());
+    }
+
+    @Override
+    public Observable<Void> updateEmail(String newEmail, String password) {
+        Map<String, String> updateObject = new HashMap<>();
+        updateObject.put("newEmail", newEmail);
+        updateObject.put("password", password);
+        return apiService.updateEmail(updateObject).compose(configureApiCallObserver());
+    }
+
+    @Override
+    public Observable<Void> updatePassword(String newPassword, String oldPassword, String oldPasswordConfirmation) {
+        Map<String, String> updateObject = new HashMap<>();
+        updateObject.put("newPassword", newPassword);
+        updateObject.put("password", oldPassword);
+        updateObject.put("confirmPassowrd", oldPasswordConfirmation);
+        return apiService.updatePassword(updateObject).compose(configureApiCallObserver());
+    }
+
+    @Override
+    public Observable<Stats> allocatePoint(String stat) {
+        return apiService.allocatePoint(stat).compose(configureApiCallObserver());
+    }
+
+    @Override
+    public Observable<Stats> bulkAllocatePoints(int strength, int intelligence, int constitution, int perception) {
+        Map<String, Map<String, Integer>> body = new HashMap<>();
+        Map<String, Integer> stats = new HashMap<>();
+        stats.put("str", strength);
+        stats.put("int", intelligence);
+        stats.put("con", constitution);
+        stats.put("per", perception);
+        body.put("stats", stats);
+        return apiService.bulkAllocatePoints(body).compose(configureApiCallObserver());
+    }
+
+    @Override
+    public Observable<Shop> retrieveMarketGear() {
+        return apiService.retrieveMarketGear().compose(configureApiCallObserver());
     }
 }

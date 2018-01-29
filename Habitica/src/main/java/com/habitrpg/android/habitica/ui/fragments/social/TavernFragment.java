@@ -41,14 +41,14 @@ public class TavernFragment extends BaseMainFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_viewpager, container, false);
 
-        viewPager = (ViewPager) v.findViewById(R.id.view_pager);
+        viewPager = (ViewPager) v.findViewById(R.id.viewPager);
 
         viewPager.setCurrentItem(0);
 
         setViewPagerAdapter();
 
-        this.tutorialStepIdentifier = "tavern";
-        this.tutorialText = getString(R.string.tutorial_tavern);
+        this.setTutorialStepIdentifier("tavern");
+        this.setTutorialText(getString(R.string.tutorial_tavern));
 
         return v;
     }
@@ -75,7 +75,7 @@ public class TavernFragment extends BaseMainFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (this.socialRepository != null) {
-            compositeSubscription.add(socialRepository.getGroup("habitrpg")
+            getCompositeSubscription().add(socialRepository.getGroup("habitrpg")
                     .subscribe(group -> {
                         TavernFragment.this.tavern = group;
                         if (group.quest != null && group.quest.key != null && TavernFragment.this.isAdded()) {
@@ -84,12 +84,6 @@ public class TavernFragment extends BaseMainFragment {
                                 TavernFragment.this.tabLayout.setVisibility(View.VISIBLE);
                                 TavernFragment.this.tabLayout.setupWithViewPager(TavernFragment.this.viewPager);
                             }
-
-                            inventoryRepository.getQuestContent(group.quest.key).first().subscribe(content -> {
-                                if (questInfoFragment != null) {
-                                    questInfoFragment.setQuestContent(content);
-                                }
-                            }, RxErrorHandler.handleEmptyError());
                         }
                     }, RxErrorHandler.handleEmptyError()));
         }
@@ -120,7 +114,7 @@ public class TavernFragment extends BaseMainFragment {
                         break;
                     }
                     case 2: {
-                        fragment = questInfoFragment = GroupInformationFragment.newInstance(tavern, user);
+                        fragment = questInfoFragment = GroupInformationFragment.Companion.newInstance(tavern, user);
                         break;
                     }
                     default:

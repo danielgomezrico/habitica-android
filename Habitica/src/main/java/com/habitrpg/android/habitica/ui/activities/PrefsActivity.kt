@@ -3,22 +3,16 @@ package com.habitrpg.android.habitica.ui.activities
 import android.os.Bundle
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.support.v7.preference.PreferenceScreen
-import android.support.v7.widget.Toolbar
-
 import com.habitrpg.android.habitica.R
 import com.habitrpg.android.habitica.components.AppComponent
-import com.habitrpg.android.habitica.ui.fragments.preferences.PreferencesFragment
-import com.habitrpg.android.habitica.ui.fragments.preferences.PushNotificationsPreferencesFragment
-
-import butterknife.BindView
 import com.habitrpg.android.habitica.ui.fragments.preferences.APIPreferenceFragment
 import com.habitrpg.android.habitica.ui.fragments.preferences.AuthenticationPreferenceFragment
+import com.habitrpg.android.habitica.ui.fragments.preferences.PreferencesFragment
 import com.habitrpg.android.habitica.ui.fragments.preferences.ProfilePreferencesFragment
+import com.habitrpg.android.habitica.ui.fragments.preferences.PushNotificationsPreferencesFragment
+import kotlinx.android.synthetic.main.activity_prefs.*
 
 class PrefsActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartScreenCallback {
-
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
 
     override fun getLayoutResId(): Int = R.layout.activity_prefs
 

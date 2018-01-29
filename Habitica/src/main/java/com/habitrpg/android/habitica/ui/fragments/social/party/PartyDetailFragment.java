@@ -32,15 +32,11 @@ import com.habitrpg.android.habitica.ui.helpers.DataBindingUtils;
 import com.habitrpg.android.habitica.ui.helpers.MarkdownParser;
 import com.habitrpg.android.habitica.ui.views.social.QuestProgressView;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 
 
 public class PartyDetailFragment extends BaseFragment {
@@ -55,7 +51,7 @@ public class PartyDetailFragment extends BaseFragment {
     @Named(AppModule.NAMED_USER_ID)
     String userId;
 
-    @BindView(R.id.refresh_layout)
+    @BindView(R.id.refreshLayout)
     SwipeRefreshLayout refreshLayout;
 
     @BindView(R.id.party_invitation_wrapper)
@@ -123,8 +119,8 @@ public class PartyDetailFragment extends BaseFragment {
 
         refreshLayout.setOnRefreshListener(this::refreshParty);
 
-        compositeSubscription.add(socialRepository.getGroup(partyId).subscribe(this::updateParty, RxErrorHandler.handleEmptyError()));
-        compositeSubscription.add(userRepository.getUser(userId).subscribe(this::updateUser, RxErrorHandler.handleEmptyError()));
+        getCompositeSubscription().add(socialRepository.getGroup(partyId).subscribe(this::updateParty, RxErrorHandler.handleEmptyError()));
+        getCompositeSubscription().add(userRepository.getUser(userId).subscribe(this::updateUser, RxErrorHandler.handleEmptyError()));
     }
 
     private void refreshParty() {
@@ -178,7 +174,7 @@ public class PartyDetailFragment extends BaseFragment {
         }
 
         if (questParticipantResponseWrapper != null) {
-            if (showParticipatantButtons()) {
+            if (showParticipantButtons()) {
                 questParticipantResponseWrapper.setVisibility(View.VISIBLE);
             } else {
                 questParticipantResponseWrapper.setVisibility(View.GONE);
@@ -186,17 +182,17 @@ public class PartyDetailFragment extends BaseFragment {
         }
     }
 
-    private boolean showParticipatantButtons() {
+    private boolean showParticipantButtons() {
         return !(user == null || user.getParty() == null || user.getParty().getQuest() == null) && !isQuestActive() && user.getParty().getQuest().RSVPNeeded;
     }
 
     private void updateQuestContent(QuestContent questContent) {
-        if (questTitleView == null || !questContent.isManaged()) {
+        if (questTitleView == null || !questContent.isValid()) {
             return;
         }
         questTitleView.setText(questContent.getText());
-        DataBindingUtils.loadImage(questScrollImageView, "inventory_quest_scroll_"+questContent.getKey());
-        DataBindingUtils.loadImage(questImageView, "quest_"+questContent.getKey());
+        DataBindingUtils.INSTANCE.loadImage(questScrollImageView, "inventory_quest_scroll_"+questContent.getKey());
+        DataBindingUtils.INSTANCE.loadImage(questImageView, "quest_"+questContent.getKey());
         if (isQuestActive()) {
             questProgressView.setVisibility(View.VISIBLE);
             questProgressView.setData(questContent, quest.getProgress());

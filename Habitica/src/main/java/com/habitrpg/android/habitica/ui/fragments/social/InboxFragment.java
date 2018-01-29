@@ -36,7 +36,6 @@ import javax.inject.Named;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.Sort;
 
 public class InboxFragment extends BaseMainFragment
         implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
@@ -64,7 +63,7 @@ public class InboxFragment extends BaseMainFragment
                 .subscribe(aVoid -> {}, RxErrorHandler.handleEmptyError());
 
         View v = inflater.inflate(R.layout.fragment_inbox, container, false);
-        unbinder = ButterKnife.bind(this, v);
+        setUnbinder(ButterKnife.bind(this, v));
 
         swipeRefreshLayout.setOnRefreshListener(this);
 

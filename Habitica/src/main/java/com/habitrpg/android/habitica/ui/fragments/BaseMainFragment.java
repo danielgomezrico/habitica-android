@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +26,7 @@ public abstract class BaseMainFragment extends BaseFragment {
     @Inject
     public ApiClient apiClient;
     @Inject
-    protected
-    UserRepository userRepository;
+    protected UserRepository userRepository;
     @Nullable
     public MainActivity activity;
     @Nullable
@@ -94,7 +92,7 @@ public abstract class BaseMainFragment extends BaseFragment {
         if (savedInstanceState != null && savedInstanceState.containsKey("userId")) {
             String userId = savedInstanceState.getString("userId");
             if (userId != null && userRepository != null) {
-                compositeSubscription.add(userRepository.getUser(userId).subscribe(habitRPGUser -> user = habitRPGUser, RxErrorHandler.handleEmptyError()));
+                getCompositeSubscription().add(userRepository.getUser(userId).subscribe(habitRPGUser -> user = habitRPGUser, RxErrorHandler.handleEmptyError()));
             }
         }
 
@@ -145,7 +143,7 @@ public abstract class BaseMainFragment extends BaseFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (user != null) {
+        if (user != null && user.isValid()) {
             outState.putString("userId", user.getId());
         }
 

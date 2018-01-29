@@ -1,28 +1,56 @@
 package com.habitrpg.android.habitica.models.user;
 
 import android.content.Context;
+import android.support.annotation.StringDef;
 
 import com.google.gson.annotations.SerializedName;
 import com.habitrpg.android.habitica.R;
 import com.habitrpg.android.habitica.models.HabitRpgClass;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 
 public class Stats extends RealmObject {
+    public static final String STRENGTH = "str";
+    public static final String INTELLIGENCE = "int";
+    public static final String CONSTITUTION = "con";
+    public static final String PERCEPTION = "per";
+    @StringDef({Stats.STRENGTH, Stats.INTELLIGENCE, Stats.CONSTITUTION, Stats.PERCEPTION})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface StatsTypes {}
+
+
+    public static final String WARRIOR = "warrior";
+    public static final String MAGE = "wizard";
+    public static final String HEALER = "healer";
+    public static final String ROGUE = "rogue";
+    @StringDef({Stats.WARRIOR, Stats.MAGE, Stats.HEALER, Stats.ROGUE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface HabiticaClassTypes {}
+
+    public static final String AUTO_ALLOCATE_FLAT = "flat";
+    public static final String AUTO_ALLOCATE_CLASSBASED = "classbased";
+    public static final String AUTO_ALLOCATE_TASKBASED = "taskbased";
+    @StringDef({Stats.AUTO_ALLOCATE_FLAT, Stats.AUTO_ALLOCATE_CLASSBASED, Stats.AUTO_ALLOCATE_TASKBASED})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface AutoAllocationTypes {}
 
     @PrimaryKey
     private String userId;
 
     User user;
-    public Float con, str, per;
+    public Integer con, str, per;
     @SerializedName("int")
-    public Float _int;
+    public Integer _int;
     public Training training;
     public Buffs buffs;
     public Integer points, lvl;
     @SerializedName("class")
+    @HabiticaClassTypes
     public String habitClass;
     public Double gp, exp, mp, hp;
     private Integer toNextLevel, maxHealth, maxMP;
@@ -60,13 +88,13 @@ public class Stats extends RealmObject {
 
     public String getTranslatedClassName(Context context) {
         switch (habitClass) {
-            case "healer":
+            case HEALER:
                 return context.getString(R.string.healer);
-            case "rogue":
+            case ROGUE:
                 return context.getString(R.string.rogue);
-            case "warrior":
+            case WARRIOR:
                 return context.getString(R.string.warrior);
-            case "wizard":
+            case MAGE:
                 return context.getString(R.string.mage);
             default:
                 return context.getString(R.string.warrior);
@@ -151,19 +179,19 @@ public class Stats extends RealmObject {
         return buffs;
     }
 
-    public Float getStr() {
+    public Integer getStr() {
         return str;
     }
 
-    public Float get_int() {
+    public Integer get_int() {
         return _int;
     }
 
-    public Float getCon() {
+    public Integer getCon() {
         return con;
     }
 
-    public Float getPer() {
+    public Integer getPer() {
         return per;
     }
 
